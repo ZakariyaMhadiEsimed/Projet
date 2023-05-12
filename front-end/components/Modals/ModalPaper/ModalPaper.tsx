@@ -6,11 +6,6 @@ import { isUndefined } from 'lodash'
 import theme from '../../../theme/theme'
 import { ModalPaperCssProps } from '../../../interfaces/Interfaces'
 /////////ASSETS/////////
-import close from '../../../assets/icones/modals/close.svg'
-import IconError from '../../../assets/icones/modals/icon-error.svg'
-import IconWarning from '../../../assets/icones/modals/icon-warning.svg'
-import IconInfo from '../../../assets/icones/modals/icon-info.svg'
-import IconSuccess from '../../../assets/icones/modals/icon-success.svg'
 
 /////////STYLED/////////
 const ModalWrapper = styled.div`
@@ -44,7 +39,7 @@ const ModalHeaderWrapper = styled.div`
 	padding: 0px 20px;
 `
 export const ModalTitle = styled.div`
-	font-size: ${theme.text.fontSize.fl};
+	font-size: ${theme.text.fontSize.fxl};
 	color: ${theme.colors.dark};
 	font-weight: 500;
 	cursor: default;
@@ -53,6 +48,7 @@ export const ModalTitle = styled.div`
 	background-size: contain;
 	line-height: 30px;
 	padding-bottom: 20px;
+	text-align: center;
 `
 const ModalBodyWrapper = styled.div`
 	background-color: ${theme.colors.white};
@@ -65,6 +61,7 @@ const HeaderTitleWrapper = styled.div`
 	align-items: start;
 	justify-content: flex-start;
 	margin-left: ${(props: ModalPaperCssProps) => (!isUndefined(props.levelBgColor) ? '37px' : null)};
+
 	& > img {
 		margin-right: 17px;
 	}
@@ -76,9 +73,7 @@ const ModalClose = styled.a`
 /////////STYLED/////////
 
 /////////TYPES//////////
-interface ModalHeaderWrapperProps {
-	hasTitle: boolean
-}
+
 type PropsModalPaper = {
 	paperHeight?: number
 	paperWidth?: number
@@ -89,42 +84,20 @@ type PropsModalPaper = {
 	customTitle?: any
 	customIcon?: string
 	overflow?: boolean
+	unity?: string
 }
 /////////TYPES//////////
 
-const ModalPaper: FC<PropsModalPaper> = ({ paperHeight, paperWidth, headerTitle, childrenPaper, closeModal, level, customTitle, customIcon, overflow }) => {
-
-	///////////////////////////////// CONFIG ///////////////////////////////////////
-
-	const generateModalLevelIcon = (level: string): string => {
-		switch (level) {
-			case 'success':
-				return IconSuccess
-			case 'warning':
-				return IconWarning
-			case 'info':
-				return IconInfo
-			case 'error':
-				return IconError
-			default:
-				return IconInfo
-		}
-	}
-
+const ModalPaper: FC<PropsModalPaper> = ({ paperHeight, paperWidth, headerTitle, childrenPaper, closeModal, level, overflow, unity }) => {
 	///////////////////////////////// RENDER ///////////////////////////////////////
 
 	return (
-		<ModalWrapper paperWidth={paperWidth} paperHeight={paperHeight} levelBgColor={level}>
+		<ModalWrapper paperWidth={paperWidth} paperHeight={paperHeight} levelBgColor={level} unity={unity}>
 			<ModalPaperWrapper overflow={overflow}>
-				<ModalHeaderWrapper hasTitle={headerTitle || customTitle ? true : false}>
+				<ModalHeaderWrapper>
 					{headerTitle && (
 						<HeaderTitleWrapper>
-							{customIcon ? (
-								<img src={customIcon} alt="" />
-							) : !isUndefined(level) ? (
-								<img src={generateModalLevelIcon(level)} alt="" />
-							) : null}
-							<ModalTitle>{headerTitle}</ModalTitle>
+							<ModalTitle level={level}>{headerTitle}</ModalTitle>
 						</HeaderTitleWrapper>
 					)}
 					<ModalClose role="button" tabIndex={0} onClick={() => closeModal()} onKeyUp={() => null}>

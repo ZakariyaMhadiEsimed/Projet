@@ -10,7 +10,6 @@ import theme from '../../theme/theme'
 const ModalsWrapper = styled.div`
 	position: ${(props: PropsModal) => (props.insideModal ? 'fixed' : 'fixed')};
 	top: ${(props: PropsModal) => (props.insideModal ? props.postop + 'px' : '0px')};
-	top: 0px;
 	left: 0;
 	display: flex;
 	justify-items: center;
@@ -18,18 +17,18 @@ const ModalsWrapper = styled.div`
 	width: ${(props: PropsModal) => (props.insideModal ? '100%' : '100vw')};
 	height: ${(props: PropsModal) => (props.insideModal ? '100%' : '100vh')};
 	overflow: hidden;
-	z-index: ${(props: PropsModal) => (props.insideModalResponse ? '20' : '10')};
+	z-index: ${(props: PropsModal) => (props.insideModalResponse ? '200' : '100')};
 	color: ${theme.colors.dark};
 	border-radius: ${(props: PropsModal) => (props.insideModal ? '20px' : '0px')};
 `
 const ModalBackground = styled.div`
-	background-color: rgba(0, 0, 0, 0.6);
+	background-color: rgba(30, 43, 68, 1);
 	position: absolute;
 	z-index: 15;
 	width: 100vw;
 	height: 100vh;
-	top: 0px;
-	opacity: 0.5;
+	top: 0;
+	opacity: 0.24;
 `
 /////////STYLED/////////
 
@@ -48,14 +47,27 @@ type PropsModal = {
 	customTitle?: any
 	customIcon?: string
 	hideOverflow?: boolean
+	unity?: string
 }
 /////////TYPES//////////
 
-const Modals: FC<PropsModal> = ({ showModal,  closeModalHandler, headerTitle, children, width, height, level, insideModal, insideModalResponse, customTitle, customIcon, hideOverflow }) => {
-
+const Modals: FC<PropsModal> = ({
+	showModal,
+	closeModalHandler,
+	headerTitle,
+	children,
+	width,
+	height,
+	level,
+	insideModal,
+	insideModalResponse,
+	customTitle,
+	customIcon,
+	hideOverflow,
+	unity,
+}) => {
 	const [winPos] = UseModalPosY(showModal)
 	const posTop = winPos.windowPageYOffset
-
 	///////////////////////////////// RENDER ///////////////////////////////////////
 
 	return showModal ? (
@@ -70,6 +82,7 @@ const Modals: FC<PropsModal> = ({ showModal,  closeModalHandler, headerTitle, ch
 				customTitle={customTitle}
 				customIcon={customIcon}
 				overflow={hideOverflow}
+				unity={unity}
 			></ModalPaper>
 			<ModalBackground onClick={closeModalHandler} />
 		</ModalsWrapper>

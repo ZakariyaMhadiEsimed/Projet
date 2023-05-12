@@ -16,9 +16,9 @@ const takeLatest = SagaEffects.takeLatest
 // We also check if we need to mock the axios call. In this case, we are mocking an error case.
 /////////TYPES//////////
 type LoginType = {
-	payload: any;
-	type: string;
-	isMocked?: boolean;
+	payload: any
+	type: string
+	isMocked?: boolean
 	mockedError?: AxiosResponse
 }
 /////////TYPES//////////
@@ -27,9 +27,8 @@ type LoginType = {
 // Fr the API we need to pass a AxiosResponse type
 
 export const getLogin = function* ({ payload, isMocked, mockedError }: LoginType): Generator<StrictEffect | Promise<AxiosResponse<any>>, void, any> {
-
 	const userCredentials = {
-		username: payload.username,
+		email: payload.email,
 		password: payload.password,
 	}
 	const apiCall = R.GET_BEARER_TOKEN()
@@ -41,7 +40,7 @@ export const getLogin = function* ({ payload, isMocked, mockedError }: LoginType
 			authenticationToken: token.data.jwttoken,
 		}
 		if (payload.rememberMe) {
-			userObject.username = payload.username
+			userObject.email = payload.email
 			userObject.password = payload.password
 		}
 		// TODO : Waiting for current user to be set

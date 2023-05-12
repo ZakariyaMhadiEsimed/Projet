@@ -2,22 +2,14 @@
 import axios, { AxiosInstance } from 'axios'
 
 const uriChecker = (): string => {
-	let URI = ''
+	let URI = 'http://localhost:3001'
+	console.log('debug : ', process.env.NEXT_PUBLIC_REACT_APP_TARGET)
 	switch (process.env.NEXT_PUBLIC_REACT_APP_TARGET) {
 		case 'development':
-			URI = `${process.env.NEXT_DEV_ENV_TARGET === 'development' ? 'http://localhost:8081' : ''}/cw`
-			break
-		// TODO : URL has to be determined for next cases
-		case 'recette':
-			URI = `${process.env.NEXT_DEV_ENV_TARGET === 'development' ? 'http://localhost:8081' : ''}/cw`
-			break
-		case 'pre-recette':
-			URI = `${process.env.NEXT_DEV_ENV_TARGET === 'development' ? 'http://localhost:8081' : ''}/cw`
-			break
-		case 'production':
-			URI = `${process.env.NEXT_DEV_ENV_TARGET === 'development' ? 'http://localhost:8081' : ''}/cw`
+			URI = 'http://localhost:3001/'
 			break
 	}
+	console.log('debug URI : ', URI)
 	return URI
 }
 

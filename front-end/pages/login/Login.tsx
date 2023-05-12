@@ -13,12 +13,23 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { RootState } from '../../interfaces/store/store.interfaces'
 import { loginActionCreators } from '../../store/actions'
-import { Button, CheckboxWrapper, InputErrorMessage, InputLabel, InputLabelWrapper, InputWrapper, StyledInput } from '../../theme/GlobalCss'
+import {
+	Button,
+	CheckboxWrapper,
+	InputErrorMessage,
+	InputLabel,
+	InputLabelWrapper,
+	InputWrapper,
+	StyledInput,
+	StyledLink,
+	StyledText,
+} from '../../theme/GlobalCss'
 import theme from '../../theme/theme'
 /////////ASSETS/////////
 import GCALogo from '../../assets/images/login/logo.svg'
 import PasswordToggleIcon from '../../assets/icones/login/eye-close.svg'
 import VisiblePasswordToggleIcon from '../../assets/icones/login/eye.svg'
+import ModalRegister from '../../components/Login/ModalRegister'
 
 /////////STYLED/////////
 const LoginLayout = styled.div`
@@ -57,7 +68,7 @@ const LoginFormWrapper = styled.div`
 		grid-row-gap: 25px;
 	}
 `
-const PasswordInputWrapper = styled.div`
+export const PasswordInputWrapper = styled.div`
 	display: flex;
 	position: relative;
 	& > input {
@@ -66,7 +77,7 @@ const PasswordInputWrapper = styled.div`
 		width: 100%;
 	}
 `
-const PasswordToggleWrapper = styled.div`
+export const PasswordToggleWrapper = styled.div`
 	background-image: url(${(props: PasswordToggleWrapperProps) => (props.visiblePassword ? VisiblePasswordToggleIcon : PasswordToggleIcon)});
 	background-color: ${theme.colors.light_500};
 	background-repeat: no-repeat;
@@ -108,6 +119,7 @@ const Login: FC<any> = ({ mockLogin }) => {
 	const router = useRouter()
 	const defaultValues = { email: '', password: '' }
 	const { t } = useTranslation()
+	const [showModalRegister, setShowModalRegister] = useState<boolean>(false)
 
 	///////////////////////////////// CONFIG ///////////////////////////////////////
 
@@ -122,8 +134,8 @@ const Login: FC<any> = ({ mockLogin }) => {
 	}
 
 	const loginFormSchema = Yup.object().shape({
-		email: Yup.string().email('Format invalide !'),
-		password: Yup.string().min(1, 'Un caractère minimum !').max(150, 'Nombre de caractères trop élevé !'),
+		email: Yup.string().email('Format invalide !').required('Champ requis !'),
+		password: Yup.string().min(1, 'Un caractère minimum !').max(150, 'Nombre de caractères trop élevé !').required('Champs requis !'),
 	})
 
 	const {
@@ -139,15 +151,15 @@ const Login: FC<any> = ({ mockLogin }) => {
 	})
 
 	///////////////////////////////// HANDLE ///////////////////////////////////////
-	console.log('debug errors : ', errors)
+
 	const onSubmit = async (data: any): Promise<void> => {
-		console.log('debug click')
+		console.log('debug click', data)
 		if (!isUndefined(mockLogin)) {
-			await mockLogin(data.username, data.password)
+			await mockLogin(data.email, data.password)
 			return
 		}
 		const user = {
-			username: data.username,
+			email: data.email,
 			password: data.password,
 			rememberMe: data.rememberMe,
 		}
@@ -169,6 +181,7 @@ const Login: FC<any> = ({ mockLogin }) => {
 			<Head>
 				<title>{title}</title>
 			</Head>
+			<ModalRegister showModal={showModalRegister} closeModalHandler={() => setShowModalRegister(false)} />
 			<LoginLayout>
 				<LoginLayoutImg />
 				<LoginLayoutForm>
@@ -179,7 +192,7 @@ const Login: FC<any> = ({ mockLogin }) => {
 							<InputWrapper>
 								<InputLabelWrapper>
 									<InputLabel>{t('login:page_login_form_label_username')}</InputLabel>
-									{/*errors.username && <InputErrorMessage>{errors.username.message?.toString()}</InputErrorMessage>*/}
+									{errors.email && <InputErrorMessage>{errors.email.message?.toString()}</InputErrorMessage>}
 								</InputLabelWrapper>
 								<Controller
 									control={control}
@@ -189,7 +202,7 @@ const Login: FC<any> = ({ mockLogin }) => {
 											onChange={onChange}
 											value={value}
 											name={name}
-											data-testid="input-login"
+											data-testid="email"
 											type="text"
 											hasError={!isUndefined(errors.email)}
 											placeholder={t('login:page_login_form_placeholder_username').toString()}
@@ -200,11 +213,11 @@ const Login: FC<any> = ({ mockLogin }) => {
 							<InputWrapper>
 								<InputLabelWrapper>
 									<InputLabel>{t('login:page_login_form_label_password')}</InputLabel>
-									{/*errors.password && (
+									{errors.password && (
 										<InputErrorMessage data-testid="password-error-message">
 											{errors.password.message?.toString()}
 										</InputErrorMessage>
-									)*/}
+									)}
 								</InputLabelWrapper>
 								<PasswordInputWrapper>
 									<Controller
@@ -215,9 +228,9 @@ const Login: FC<any> = ({ mockLogin }) => {
 												onChange={onChange}
 												value={value}
 												name={name}
-												data-testid="input-password"
+												data-testid="password"
 												type={visiblePassword ? 'text' : 'password'}
-												//hasError={!isUndefined(errors.password)}
+												hasError={!isUndefined(errors.password)}
 												placeholder={t('login:page_login_form_placeholder_password').toString()}
 											/>
 										)}
@@ -229,20 +242,21 @@ const Login: FC<any> = ({ mockLogin }) => {
 								<input type="checkbox" />
 								<label>{t('login:page_login_checkbox_rememberMe')}</label>
 							</CheckboxWrapper>
-
-							<div onClick={() => console.log('debug')}>test</div>
+							<StyledLink align={'right'} onClick={() => setShowModalRegister(true)}>
+								S'inscrire
+							</StyledLink>
+							<Button
+								type="submit"
+								width={100}
+								height={50}
+								backgroundColor={theme.colors.primary}
+								color={theme.colors.white}
+								hoverBackgroundColor={theme.colors.primary_200}
+								percentUnit={true}
+								fontSize={theme.text.fontSize.fl}
+								value={t('login:page_login_button_login').toString()}
+							/>
 						</form>
-						<Button
-							type="submit"
-							width={100}
-							height={50}
-							backgroundColor={theme.colors.primary}
-							color={theme.colors.white}
-							hoverBackgroundColor={theme.colors.primary_200}
-							percentUnit={true}
-							fontSize={theme.text.fontSize.fl}
-							value={t('login:page_login_button_login').toString()}
-						/>
 					</LoginFormWrapper>
 				</LoginLayoutForm>
 			</LoginLayout>

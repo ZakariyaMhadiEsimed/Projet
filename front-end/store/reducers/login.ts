@@ -6,16 +6,16 @@ import extendUpdate from '../../helpers/extendUpdate'
 import ActionsTypes from '../../constants/ActionsTypes'
 import Store from '../../helpers/Store'
 import initialState from '../initialState'
-import jwtDecode from "jwt-decode";
+import jwtDecode from 'jwt-decode'
 
 extendUpdate(update)
 
 type Jwt = {
 	privileges: Array<Number>
-	firstName: String,
-	lastName: String,
-	roleName: String,
-	sub: String,
+	firstName: String
+	lastName: String
+	roleName: String
+	sub: String
 	languageId: Number
 }
 
@@ -30,15 +30,14 @@ const login = {
 		})
 	},
 	[ActionsTypes.GET_LOGIN_SUCCESS]: (state: any, payload: any): any => {
-
 		const user = payload.user
-		const jwt:Jwt = jwtDecode(payload?.user?.authenticationToken)
+		const jwt: Jwt = jwtDecode(payload?.user?.authenticationToken)
 
 		Store.set('user', { authenticationToken: user?.authenticationToken })
 
 		const pref = Store.get('preferences')
-		if(!isEmpty(user?.username) && !isEmpty(user?.password) || !isUndefined(user?.username) && !isUndefined(user?.password)) {
-			pref.username = user?.username
+		if ((!isEmpty(user?.email) && !isEmpty(user?.password)) || (!isUndefined(user?.email) && !isUndefined(user?.password))) {
+			pref.email = user?.email
 			pref.password = user?.password
 			Store.set('preferences', pref)
 		}
@@ -49,12 +48,12 @@ const login = {
 				},
 				identity: {
 					$set: {
-						privileges:jwt.privileges,
+						privileges: jwt.privileges,
 						firstName: jwt.firstName,
 						lastName: jwt.lastName,
-						userName: jwt.sub,
+						email: jwt.sub,
 						roleName: jwt.roleName,
-						languageId: jwt.languageId
+						languageId: jwt.languageId,
 					},
 				},
 				isConnected: {
@@ -89,7 +88,6 @@ const login = {
 		})
 	},
 	[ActionsTypes.GET_CURRENT_USER]: (state: any, payload: any) => {
-
 		const user = Store.get('user')
 		const jwt: Jwt = jwtDecode(user?.authenticationToken)
 
@@ -100,9 +98,9 @@ const login = {
 						privileges: jwt.privileges,
 						firstName: jwt.firstName,
 						lastName: jwt.lastName,
-						userName: jwt.sub,
+						email: jwt.sub,
 						roleName: jwt.roleName,
-						languageId: jwt.languageId
+						languageId: jwt.languageId,
 					},
 				},
 				isConnected: {
@@ -110,7 +108,7 @@ const login = {
 				},
 			},
 		})
-	}
+	},
 }
 
 export default login

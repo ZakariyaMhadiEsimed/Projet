@@ -23,20 +23,11 @@ function createQueryParams(queryParams: queryParamsObject): string {
 
 	return queryParamSend
 }
-
-// Is a fake endpoint, redirected after by middleware
-export function SERVICE_AVAILABILITY(): string {
-	return `/utils/ping`
-}
-
 // ERROR MANAGER
 /**
  *
  * @returns {string}
  */
 export function GET_BEARER_TOKEN(): string {
-	return `/auth/jwt`
+	return `/login`
 }
-
-// TODO : Might be usefull if we want to use middleware.ts as proxy, to remove later ?
-export const endpointList = [SERVICE_AVAILABILITY(), GET_BEARER_TOKEN()]

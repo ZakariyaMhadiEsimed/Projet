@@ -2,8 +2,19 @@
 import styled from 'styled-components'
 ///////COMPONENTS///////
 import theme from './theme'
-import { ContentWrapperProps, IconSquareCssProps, ModalButtonWrapperProps, PageWrapperProps, ButtonCssProps, ModalsBodyContainerProps, StyledInputProps,
-	SelectInputProps, SelectInputWrapperProps, FormHandlerProps, OptionCustomProps } from '../interfaces/Interfaces'
+import {
+	ContentWrapperProps,
+	IconSquareCssProps,
+	ModalButtonWrapperProps,
+	PageWrapperProps,
+	ButtonCssProps,
+	ModalsBodyContainerProps,
+	StyledInputProps,
+	SelectInputProps,
+	SelectInputWrapperProps,
+	FormHandlerProps,
+	OptionCustomProps,
+} from '../interfaces/Interfaces'
 /////////ASSETS/////////
 import UncheckedIcon from '../assets/icones/global/unchecked.svg'
 import CheckedIcon from '../assets/icones/global/checked.svg'
@@ -69,7 +80,7 @@ export const InputErrorMessage = styled.span`
 `
 export const StyledInput = styled.input`
 	height: 44px;
-	width: auto;
+	width: -webkit-fill-available;
 	border-radius: 5px;
 	border: 1px solid ${(props: StyledInputProps) => (props.hasError ? theme.colors.border.error : theme.colors.border.grey)};
 	padding-left: 15px;
@@ -113,6 +124,16 @@ export const CheckboxWrapper = styled.div`
 	& > label {
 		font-size: ${theme.text.fontSize.fm};
 		font-weight: ${theme.text.fontWeight.regular};
+	}
+`
+export const StyledLink = styled.div`
+	font-size: ${theme.text.fontSize.fm};
+	font-weight: ${theme.text.fontWeight.regular};
+	text-align: ${(props) => (props.align ? props.align : 'initial')};
+	:hover {
+		text-decoration: underline;
+		color: ${theme.colors.primary_200};
+		cursor: pointer;
 	}
 `
 export const PageWrapper = styled.div`
@@ -217,10 +238,8 @@ export const RadioWrapper = styled.div`
 		font-weight: ${theme.text.fontWeight.regular};
 	}
 `
-export const RadioInput = styled.input`
-`
-export const RadioInputLabel = styled.label`
-`
+export const RadioInput = styled.input``
+export const RadioInputLabel = styled.label``
 export const PageFormTitle = styled.span`
 	font-size: ${theme.text.fontSize.fl};
 	color: ${theme.colors.secondary_400};
@@ -231,22 +250,29 @@ export const PageFormHandler = styled.div`
 	padding: 20px;
 	background-color: white;
 `
-export const FormHandler = styled.div`
-	display: grid;
-	grid-template-columns: ${(props: FormHandlerProps) => `repeat(${props.formCols}, auto)`};
-	grid-column-gap: 50px;
-	align-items: start;
-`
-export const PageFormColumnWrapper = styled.div`
-	display: grid;
-	grid-template-columns: 40% 60%;
-	row-gap: 10px;
-	align-items: center;
-`
 export const FormInputLabelWrapper = styled(InputLabelWrapper)`
 	flex-direction: column;
 	& span {
 		text-align: left;
 	}
+`
+export const FormHandler = styled.div`
+	display: grid;
+	grid-template-columns: ${(props: FormHandlerProps) => `repeat(${props.formCols}, auto)`};
+	grid-column-gap: 50px;
+	align-items: start;
+	height: 100%;
+`
+export const PageFormColumnWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	row-gap: 12px;
+`
+
+export const PageFormFieldWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	min-width: 270px;
+	row-gap: 12px;
 `
 /////////STYLED/////////

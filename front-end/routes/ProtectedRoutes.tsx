@@ -25,7 +25,6 @@ type ProtectedRouteType = {
 /////////TYPES//////////
 
 const ProtectedRoute = ({ router, children }: ProtectedRouteType): any => {
-
 	const { user } = useSelector(
 		(state: RootState) => ({
 			user: state.user,
@@ -44,18 +43,6 @@ const ProtectedRoute = ({ router, children }: ProtectedRouteType): any => {
 
 	useEffect(() => {
 		if (isBrowser) {
-			// Testing service availability
-			const a = async (): Promise<any> => {
-				const rst = await API.get(R.SERVICE_AVAILABILITY())
-					.then((res) => res.data)
-					.catch((e) => {
-						return { error: true, response: e.response }
-					})
-				if (rst?.response?.status === 503) {
-					return router.push(uriList.maintenance)
-				}
-			}
-			a()
 			const userLocalStorage = Store.get('user')
 			const preferences = Store.get('preferences')
 			if (preferences && !isUndefined(preferences.idLanguage) && i18n.resolvedLanguage !== preferences.idLanguage) {

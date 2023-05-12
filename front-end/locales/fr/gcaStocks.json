@@ -1,0 +1,23 @@
+{
+	"page_gcaStocks_title": "Suivi des stocks GCA",
+	"page_gcaStocks_table_column_itemReference": "Réf. article",
+	"page_gcaStocks_table_column_itemSerialNumber": "N° série article",
+	"page_gcaStocks_table_column_itemLotCode": "N° lot",
+	"page_gcaStocks_table_column_itemManufacturedDate": "Date fabrication",
+	"page_gcaStocks_table_column_itemExpirationDate": "Date expiration",
+	"page_gcaStocks_table_column_shipmentType": "Type envoi",
+	"page_gcaStocks_table_column_warehouseCode": "Code entrepôt",
+	"page_gcaStocks_table_column_stockQuantity": "Qté en Stock Clinique",
+	"page_gcaStocks_table_column_transitQuantity": "Qté en Transit",
+	"page_gcaStocks_table_column_axStockQuantity": "Qté en Stock AX",
+	"page_gcaStocks_filters_expired_item_title": "Article périmé",
+	"page_gcaStocks_filters_warehouse_code_title": "Code entrepôt",
+	"page_gcaStocks_filters_shipmentTypes_title": "Type d'envoi",
+	"page_gcaStocks_table_title": "Stock",
+	"page_gcaStocks_filters_shipmentTypes_item_item_stock_deposit": "Dépôt",
+	"page_gcaStocks_filters_shipmentTypes_item_item_stock_permanent": "Permanent",
+	"page_gcaStocks_filters_shipmentTypes_item_item_stock_renewal": "Renouvellement",
+	"page_gcaStocks_table_row_shipmentType_item_stock_deposit": "Dépôt",
+	"page_gcaStocks_table_row_shipmentType_item_stock_permanent": "Permanent",
+	"page_gcaStocks_table_row_shipmentType_item_stock_renewal": "Renouvellement"
+}

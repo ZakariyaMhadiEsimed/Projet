@@ -1,0 +1,18 @@
+{
+	"page_inventoryDetail_title": "Suivi des inventaires",
+	"page_inventoryDetail_table_title": "Détail de l'inventaire {0} - Code Entrepôt {1}",
+	"page_inventoryDetail_filters_itemReference_title": "Réf. article",
+	"page_inventoryDetail_filters_onlyStockAnomaly_title": "Uniquement anomalies",
+	"page_inventoryDetail_table_column_itemReference": "Réf. article",
+	"page_inventoryDetail_table_column_itemSerialNumber": "N° série article",
+	"page_inventoryDetail_table_column_itemLotCode": "N° lot",
+	"page_inventoryDetail_table_column_itemExpirationDate": "Date péremption",
+	"page_inventoryDetail_table_column_axStockQuantity": "Stock AX",
+	"page_inventoryDetail_table_column_initialAxStockQuantity": "Stock initial AX",
+	"page_inventoryDetail_table_column_scannedQuantity": "Stock physique",
+	"page_inventoryDetail_table_column_gapQuantity": "Qtés écart",
+	"page_inventoryDetail_table_column_gapType": "Type écart",
+	"page_inventoryDetail_table_column_gapComment": "Commentaire",
+	"page_inventoryDetail_table_row_gapType_gap_type1": "Type 1",
+	"page_inventoryDetail_table_row_gapType_gap_type2": "Type 2"
+}

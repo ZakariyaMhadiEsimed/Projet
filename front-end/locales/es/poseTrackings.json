@@ -1,0 +1,19 @@
+{
+	"page_poseTrackings_title": "Suivi des poses",
+	"page_poseTrackings_table_title": "Liste des poses",
+	"page_poseTrackings_filters_itemReference_title": "Réf. article",
+	"page_poseTrackings_filters_automaticRenewal_title": "Renouvellement",
+	"page_poseTrackings_table_column_placementCode": "N° pose",
+	"page_poseTrackings_table_column_placementDate": "Date d'intervention",
+	"page_poseTrackings_table_column_placementClinicCode": "Code clinique",
+	"page_poseTrackings_table_column_placementSurgeon": "Chirurgien",
+	"page_poseTrackings_table_column_patientInitial": "Initiales patient(e)",
+	"page_poseTrackings_table_column_interventionType": "Type intervention",
+	"page_poseTrackings_table_column_itemSerialNumber": "N° série implant",
+	"page_poseTrackings_table_column_itemManufacturedDate": "Date fabrication",
+	"page_poseTrackings_table_column_itemExpirationDate": "Date péremption",
+	"page_poseTrackings_table_column_itemDesterillize": "Implant destérillisé",
+	"page_poseTrackings_table_column_automaticRenewal": "Renouvellement",
+	"page_poseTrackings_table_row_interventionType_aesthetics_placement_type": "Esthétique",
+	"page_poseTrackings_table_row_interventionType_cpam_placement_type": "Prise en charge CPAM"
+}

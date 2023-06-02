@@ -20,8 +20,13 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useTranslation } from 'react-i18next'
 import { PasswordInputWrapper, PasswordToggleWrapper } from '../../pages/login/Login'
 import theme from '../../theme/theme'
+import DatePickerInput from '../Form/DatePickerInput'
 
-const ModalRegister = (props) => {
+interface ModalRegisterProps {
+	showModal: boolean
+	closeModalHandler: () => void
+}
+const ModalRegister = (props: ModalRegisterProps) => {
 	const defaultValues = { email: '', password: '', firstName: '', lastName: '', birthDate: '', postalAdress: '', phone: '', CA: '', taxes: '' }
 	const { t } = useTranslation()
 	const [visiblePassword, setVisiblePassword] = useState<boolean>(false)
@@ -42,9 +47,6 @@ const ModalRegister = (props) => {
 		control,
 		handleSubmit,
 		formState: { errors },
-		setValue,
-		getValues,
-		reset,
 	} = useForm({
 		resolver: yupResolver(registerFormSchema),
 		defaultValues,
@@ -108,18 +110,20 @@ const ModalRegister = (props) => {
 									<InputLabel>Date de naissance</InputLabel>
 									{errors.birthDate && <InputErrorMessage>{errors.birthDate.message?.toString()}</InputErrorMessage>}
 								</InputLabelWrapper>
+
 								<Controller
 									control={control}
 									name={`birthDate`}
 									render={({ field: { onChange, value, name } }) => (
-										<StyledInput
+										/*<StyledInput
 											onChange={onChange}
 											value={value}
 											name={name}
 											data-testid="birthDate"
-											type="text"
+											type="date"
 											hasError={!isUndefined(errors.birthDate)}
-										/>
+										/>*/
+										<DatePickerInput onChange={onChange} value={value} />
 									)}
 								/>
 							</PageFormFieldWrapper>

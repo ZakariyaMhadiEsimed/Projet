@@ -22,7 +22,6 @@ import {
 	InputWrapper,
 	StyledInput,
 	StyledLink,
-	StyledText,
 } from '../../theme/GlobalCss'
 import theme from '../../theme/theme'
 /////////ASSETS/////////
@@ -30,6 +29,7 @@ import GCALogo from '../../assets/images/login/logo.svg'
 import PasswordToggleIcon from '../../assets/icones/login/eye-close.svg'
 import VisiblePasswordToggleIcon from '../../assets/icones/login/eye.svg'
 import ModalRegister from '../../components/Login/ModalRegister'
+import InputEmail from '../../components/Form/InputEmail'
 
 /////////STYLED/////////
 const LoginLayout = styled.div`
@@ -142,9 +142,6 @@ const Login: FC<any> = ({ mockLogin }) => {
 		control,
 		handleSubmit,
 		formState: { errors },
-		setValue,
-		getValues,
-		reset,
 	} = useForm({
 		resolver: yupResolver(loginFormSchema),
 		defaultValues,
@@ -198,12 +195,11 @@ const Login: FC<any> = ({ mockLogin }) => {
 									control={control}
 									name={`email`}
 									render={({ field: { onChange, value, name } }) => (
-										<StyledInput
+										<InputEmail
 											onChange={onChange}
 											value={value}
 											name={name}
-											data-testid="email"
-											type="text"
+											dataTestId="email"
 											hasError={!isUndefined(errors.email)}
 											placeholder={t('login:page_login_form_placeholder_username').toString()}
 										/>

@@ -31,3 +31,11 @@ function createQueryParams(queryParams: queryParamsObject): string {
 export function GET_BEARER_TOKEN(): string {
 	return `/login`
 }
+
+export function POST_CREATE_USER(): string {
+	return '/create'
+}
+
+export function GET_USER(): string {
+	return '/users/infos'
+}

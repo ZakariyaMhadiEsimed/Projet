@@ -78,7 +78,7 @@ const ProtectedRoute = ({ router, children }: ProtectedRouteType): any => {
 		if (user?.path?.length > 0) {
 			router.push(user.path)
 		}
-	}, [user.path, router])
+	}, [user?.path, router])
 
 	useEffect(() => {
 		const f = find(routeList, { path: router.pathname })
@@ -89,14 +89,15 @@ const ProtectedRoute = ({ router, children }: ProtectedRouteType): any => {
 
 	// Checking rights
 	// TODO : Waiting back-end to implement this
-	useEffect(() => {
+	/*useEffect(() => {
 		if (!isUndefined(routeObject) && !isUndefined(user.identity.privileges) && !isUndefined(routeObject.requiredPrivilege)) {
 			if (isUndefined(find(user.identity.privileges, (o) => o === routeObject.requiredPrivilege))) {
 				actionsLogin.getLogout('user')
 				router.push(uriList.login)
+				console.log('debug aie')
 			}
 		}
-	}, [routeObject, user])
+	}, [routeObject, user])*/
 
 	// Anythime children is changing, closing loader
 	useEffect(() => {
@@ -108,7 +109,7 @@ const ProtectedRoute = ({ router, children }: ProtectedRouteType): any => {
 	return !constructorFlag ? (
 		router.route === uriList.maintenance ? (
 			children
-		) : user.isLoading ? null : user.isConnected ? (
+		) : user?.isLoading ? null : user?.isConnected ? (
 			<Layout routerParams={routeObject}>{children}</Layout>
 		) : (
 			<Login />

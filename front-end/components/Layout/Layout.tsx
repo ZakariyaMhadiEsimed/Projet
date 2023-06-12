@@ -1,5 +1,5 @@
 ////////LIBRARY/////////
-import React, { Fragment, FC } from 'react'
+import React, { Fragment, FC, useState } from 'react'
 import styled from 'styled-components'
 import { useSelector, shallowEqual, useDispatch } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -19,8 +19,10 @@ import Image from 'next/image'
 import { RouteObject, uriList } from '../../constants/RouteList'
 import { useRouter } from 'next/router'
 /////////ASSETS/////////
-import GCALogo from '../../assets/images/layout/gca-logo.svg'
+import GCALogo from '../../assets/images/login/logo.svg'
 import IconLogout from '../../assets/icones/layout/logout.svg'
+import IconParams from '../../assets/icones/menu/stocks.svg'
+import ModalRegister from '../Login/ModalRegister'
 
 /////////STYLED/////////
 const GridLayout = styled.div`
@@ -30,12 +32,12 @@ const GridLayout = styled.div`
 `
 const LayoutLogoWrapper = styled.div`
 	height: 80px;
-
 	text-align: center;
 	display: flex;
 	& > img {
 		margin: auto auto auto 24px;
 	}
+	align-items: center;
 `
 const HeaderWrapper = styled.div`
 	height: 80px;
@@ -61,8 +63,10 @@ const HeaderUserInfos = styled.span`
 	font-size: ${theme.text.fontSize.fl};
 	font-weight: bold;
 	margin-left: auto;
-	margin-right: 16px;
+	margin-right: 25px;
 	text-decoration: underline;
+	padding-top: 5px;
+	cursor: pointer;
 `
 /////////STYLED/////////
 
@@ -74,7 +78,6 @@ type PropsLayout = {
 /////////TYPES//////////
 
 const Layout: FC<PropsLayout> = ({ children, routerParams }) => {
-
 	const { user, modal } = useSelector(
 		(state: RootState) => ({
 			user: state.user,
@@ -82,6 +85,7 @@ const Layout: FC<PropsLayout> = ({ children, routerParams }) => {
 		}),
 		shallowEqual
 	)
+	const [showModal, setShowModal] = useState<boolean>(false)
 	const router = useRouter()
 	const actionsLogin = bindActionCreators(loginActionCreators, useDispatch())
 	const { t } = useTranslation()
@@ -93,7 +97,7 @@ const Layout: FC<PropsLayout> = ({ children, routerParams }) => {
 	let title = ''
 	switch (process.env.NEXT_PUBLIC_REACT_APP_TARGET) {
 		case 'development':
-			title = 'Dev-GC-Aesthetics'
+			title = 'Dev-Projet'
 			break
 		case 'recette':
 			title = 'Recette-GC-Aesthetics'
@@ -115,6 +119,7 @@ const Layout: FC<PropsLayout> = ({ children, routerParams }) => {
 			<Loading />
 			{
 				/*user.isConnected && */ <Fragment>
+					<ModalRegister showModal={showModal} closeModalHandler={() => setShowModal(false)} isEdit={true} />
 					<Head>
 						<title>{title}</title>
 						<link rel="shortcut icon" href={'/favicon.ico'} type="image/x-icon" />
@@ -150,12 +155,26 @@ const Layout: FC<PropsLayout> = ({ children, routerParams }) => {
 					<ToastSuccess />
 					<GridLayout>
 						<LayoutLogoWrapper>
-							<Image src={GCALogo} width="140" height="48" alt="gca-logo" />
+							<Image src={GCALogo} style={{ margin: 0 }} width="100" height="80" alt="gca-logo" />
+							Bonjour{' '}
+							<span style={{ marginLeft: 5, fontWeight: 'bold', color: theme.colors.primary_200, textTransform: 'capitalize' }}>
+								{user.identity.firstName}
+							</span>
 						</LayoutLogoWrapper>
 						<HeaderWrapper>
 							<PageTitle>{routerParams?.titleTranslation && t(routerParams?.titleTranslation)}</PageTitle>
 							{/* TODO : To change after we got currentuser informations */}
-							<HeaderUserInfos>{'testprenom TESTNOM (testrole)'}</HeaderUserInfos>
+							<HeaderUserInfos>
+								<Image
+									src={IconParams}
+									alt="params"
+									width="18"
+									height="20"
+									onClick={() => {
+										setShowModal(true)
+									}}
+								/>
+							</HeaderUserInfos>
 							<Image
 								src={IconLogout}
 								alt="gca-logout"
@@ -163,7 +182,7 @@ const Layout: FC<PropsLayout> = ({ children, routerParams }) => {
 								height="20"
 								onClick={() => {
 									router.replace(uriList.login)
-									actionsLogin.getLogout('user')
+									actionsLogin.getLogout()
 								}}
 							/>
 						</HeaderWrapper>

@@ -1,20 +1,39 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import moment from 'moment'
+import styled from 'styled-components'
+import { isNull } from 'lodash'
 
-const DatePickerInput = ({ value, onChange }) => {
+const StyledDatePicker = styled(DatePicker)`
+	border: ${(props: any) => props.hasError && '1px solid red !important'};
+	::placeholder {
+		color: ${(props: any) => props.hasError && 'red !important'};
+	}
+`
+interface DatePickerInputProps {
+	value: any
+	onChange: any
+	maxDate: Date
+	name?: string
+	hasError?: boolean
+}
+const DatePickerInput = (props: DatePickerInputProps) => {
+	const { value, onChange, maxDate, hasError } = props
 	const [selectedDate, setSelectedDate] = useState(value ? new Date(value) : null)
-
-	const handleDateChange = (date) => {
+	const handleDateChange = (date: any) => {
 		setSelectedDate(date)
-		if (onChange) {
-			onChange(date.toISOString().substr(0, 10))
-		}
+		if (onChange && !isNull(date)) {
+			onChange(moment(date).format('DD-MM-YYYY'))
+		} else onChange('')
 	}
 
+	useEffect(() => {
+		if (value) setSelectedDate(new Date(value))
+	}, [value])
+
 	return (
-		<DatePicker
+		<StyledDatePicker
 			locale="fr"
 			selected={selectedDate}
 			onChange={handleDateChange}
@@ -22,10 +41,11 @@ const DatePickerInput = ({ value, onChange }) => {
 			showYearDropdown={true}
 			scrollableYearDropdown={true}
 			yearDropdownItemNumber={100}
-			maxDate={new Date()}
+			maxDate={maxDate}
 			isClearable
 			//maxDate={moment(new Date()).subtract(18, 'years').toDate()}
 			placeholderText="Sélectionner une date"
+			hasError={hasError}
 		/>
 	)
 }

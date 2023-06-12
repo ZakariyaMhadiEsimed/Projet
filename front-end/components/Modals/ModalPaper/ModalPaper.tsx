@@ -6,6 +6,7 @@ import { isUndefined } from 'lodash'
 import theme from '../../../theme/theme'
 import { ModalPaperCssProps } from '../../../interfaces/Interfaces'
 /////////ASSETS/////////
+import CloseIcon from '../../../assets/icones/global/close.svg'
 
 /////////STYLED/////////
 const ModalWrapper = styled.div`
@@ -69,6 +70,8 @@ const HeaderTitleWrapper = styled.div`
 const ModalClose = styled.a`
 	cursor: pointer;
 	margin-left: 40px;
+	background-image: url(${CloseIcon});
+	background-repeat: no-repeat;
 `
 /////////STYLED/////////
 

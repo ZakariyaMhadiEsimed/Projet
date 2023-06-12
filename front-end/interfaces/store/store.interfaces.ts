@@ -23,12 +23,13 @@ export interface RootState {
 }
 
 export interface userIdentity {
+	userId(userId: any): string
 	idUser: number
 	userName: string
 	firstName: string
 	lastName: string
 	idRole: 'ADMIN' | 'DEV' | 'STD'
-	privileges: Array<Number>
+	privileges: Array<number>
 	picture: string
 }
 

@@ -21,7 +21,6 @@ const InputEmail = (props: InputEmailProps) => {
 	}
 
 	const handleBlur = () => {
-		console.log('debug')
 		setFormattedValue(formattedValue.trim())
 	}
 

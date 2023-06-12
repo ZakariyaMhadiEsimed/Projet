@@ -43,9 +43,9 @@ router.get('/oldGuest', (req, res) => {
   })
 }) 
 
-router.get('/userInfo', (req, res) => {
+router.get('/infos', (req, res) => {
   const token = req.headers.authorization.split(' ')
-  const foundUser = userRepository.getUserById(extractUserId(token[1], process.env.JWT_SECRET).userId) 
+  const foundUser = userRepository.getUserById(extractUserId(token[1], process.env.JWT_SECRET).userId)
   if (!foundUser) {
     throw new Error('User not found') 
   }

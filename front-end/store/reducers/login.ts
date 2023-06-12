@@ -11,12 +11,12 @@ import jwtDecode from 'jwt-decode'
 extendUpdate(update)
 
 type Jwt = {
-	privileges: Array<Number>
-	firstName: String
-	lastName: String
-	roleName: String
-	sub: String
-	languageId: Number
+	privileges: Array<number>
+	firstName: string
+	lastName: string
+	roleName: string
+	sub: string
+	languageId: number
 }
 
 const login = {
@@ -32,9 +32,7 @@ const login = {
 	[ActionsTypes.GET_LOGIN_SUCCESS]: (state: any, payload: any): any => {
 		const user = payload.user
 		const jwt: Jwt = jwtDecode(payload?.user?.authenticationToken)
-
 		Store.set('user', { authenticationToken: user?.authenticationToken })
-
 		const pref = Store.get('preferences')
 		if ((!isEmpty(user?.email) && !isEmpty(user?.password)) || (!isUndefined(user?.email) && !isUndefined(user?.password))) {
 			pref.email = user?.email
@@ -48,16 +46,18 @@ const login = {
 				},
 				identity: {
 					$set: {
-						privileges: jwt.privileges,
 						firstName: jwt.firstName,
 						lastName: jwt.lastName,
 						email: jwt.sub,
 						roleName: jwt.roleName,
-						languageId: jwt.languageId,
+						userId: jwt.userId,
 					},
 				},
 				isConnected: {
 					$set: true,
+				},
+				error: {
+					$set: {},
 				},
 			},
 		})
@@ -80,7 +80,6 @@ const login = {
 		const initUser = cloneDeep(initialState.user)
 		//payload.tokenObject.clearSingle()
 		Store.remove('user')
-
 		return update(state, {
 			user: {
 				$set: { ...initUser },

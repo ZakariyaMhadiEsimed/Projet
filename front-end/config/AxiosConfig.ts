@@ -9,7 +9,6 @@ const uriChecker = (): string => {
 			URI = 'http://localhost:3001/'
 			break
 	}
-	console.log('debug URI : ', URI)
 	return URI
 }
 

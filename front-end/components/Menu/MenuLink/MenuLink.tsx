@@ -26,7 +26,7 @@ const LinkWrapper = styled(Link)`
 	width: 100%;
 	text-decoration: none;
 	cursor: pointer;
-	${(props: LinkWrapperProps) => (props.isCurrentLink ? `& > div div {color: ${theme.colors.primary_500}}` : '')}
+	${(props: LinkWrapperProps) => (props.isCurrentLink ? `& > div div {color: ${theme.colors.primary_200}}` : '')}
 	&:hover > div div {
 		color: ${theme.colors.primary_500};
 	}
@@ -34,7 +34,7 @@ const LinkWrapper = styled(Link)`
 const LinkWrapperDiv = styled.div`
 	width: 100%;
 	text-decoration: none;
-	${(props: LinkWrapperProps) => (props.isCurrentLink ? `& > div > div {color: ${theme.colors.primary_500}}` : '')}
+	${(props: LinkWrapperProps) => (props.isCurrentLink ? `& > div > div {color: ${theme.colors.primary_200}}` : '')}
 	&:hover > div > div {
 		color: ${theme.colors.primary_500};
 	}
@@ -72,7 +72,7 @@ const NestedMenuText = styled.div`
 	display: flex;
 	align-items: center;
 	font-size: ${theme.text.fontSize.fs};
-	color: ${(props: NestedMenuTextProps) => (props.isCurrentLink ? theme.colors.primary : theme.colors.secondary_100)};
+	color: ${(props: NestedMenuTextProps) => (props.isCurrentLink ? theme.colors.primary_200 : theme.colors.secondary_100)};
 `
 const MenuIcon = styled.div`
 	width: 55px;
@@ -105,7 +105,7 @@ const MenuWrapper = styled.div`
 				content: '';
 				height: 100%;
 				width: 5px;
-				background-color: ${theme.colors.primary};
+				background-color: ${theme.colors.primary_200};
 				position: absolute;
 				top: 0px;
 			}`
@@ -154,7 +154,7 @@ type MenuLinkProps = {
 	handleSetToggledNested?: any
 	menuId?: number
 	isCurrentLink?: boolean | undefined
-	link?:string
+	link?: string
 }
 type MenuIconProps = {
 	src: string | undefined
@@ -171,19 +171,34 @@ type MenuNestedProps = {
 }
 /////////TYPES//////////
 
-const MenuLink: FC<MenuLinkProps> = ({ text, icon, nested, specAction, specActionIcon, subMenus, toggledNested, handleSetToggledNested, menuId, isCurrentLink, link }) => {
-
+const MenuLink: FC<MenuLinkProps> = ({
+	text,
+	icon,
+	nested,
+	specAction,
+	specActionIcon,
+	subMenus,
+	toggledNested,
+	handleSetToggledNested,
+	menuId,
+	isCurrentLink,
+	link,
+}) => {
 	const router = useRouter()
 	const isMenuLinkToggled = !isEmpty(toggledNested) ? toggledNested.toggle : false
 
 	///////////////////////////////// HANDLE ///////////////////////////////////////
-	
+
 	// Used to check if we need to render a div (with nested links) or an 'a' tag for direct link
 	const linkRender = (children: any): JSX.Element => {
 		return isEmpty(subMenus) ? (
-			<LinkWrapper isCurrentLink={isCurrentLink} href={link} onClick={() => {
-				nested && handleSetToggledNested(menuId)
-			}}>
+			<LinkWrapper
+				isCurrentLink={isCurrentLink}
+				href={link}
+				onClick={() => {
+					nested && handleSetToggledNested(menuId)
+				}}
+			>
 				{children}
 			</LinkWrapper>
 		) : (
@@ -196,7 +211,7 @@ const MenuLink: FC<MenuLinkProps> = ({ text, icon, nested, specAction, specActio
 	///////////////////////////////// RENDER ///////////////////////////////////////
 
 	return (
-		<MenuLinkWrapper /*onClick={nested && specAction} */isCurrentLink={isCurrentLink}>
+		<MenuLinkWrapper /*onClick={nested && specAction} */ isCurrentLink={isCurrentLink}>
 			{linkRender(
 				<>
 					<MenuWrapper isToggleNested={isMenuLinkToggled}>

@@ -4,11 +4,8 @@ import Tokens from '../../helpers/Store'
 import { ActionsArgs } from '../../interfaces/store/store.interfaces'
 
 const login = {
-	getLogout: (tokenObject: Tokens): ActionsArgs => ({
+	getLogout: (): ActionsArgs => ({
 		type: ActionsTypes.GET_LOGOUT,
-		payload: {
-			tokenObject: tokenObject,
-		},
 	}),
 	getCurrentUser: (token: string): ActionsArgs => ({
 		type: ActionsTypes.GET_CURRENT_USER,

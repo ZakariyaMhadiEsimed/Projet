@@ -1,7 +1,7 @@
 ////////LIBRARY/////////
-import { isUndefined } from 'lodash'
+import { isEmpty, isUndefined } from 'lodash'
 import React, { FC, useEffect, useState } from 'react'
-import { Controller, useFormContext, useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -30,6 +30,8 @@ import PasswordToggleIcon from '../../assets/icones/login/eye-close.svg'
 import VisiblePasswordToggleIcon from '../../assets/icones/login/eye.svg'
 import ModalRegister from '../../components/Login/ModalRegister'
 import InputEmail from '../../components/Form/InputEmail'
+import { uriList } from '../../constants/RouteList'
+import { use } from 'i18next'
 
 /////////STYLED/////////
 const LoginLayout = styled.div`
@@ -116,6 +118,7 @@ const Login: FC<any> = ({ mockLogin }) => {
 	)
 	const actionsLogin = bindActionCreators(loginActionCreators, useDispatch())
 	const [visiblePassword, setVisiblePassword] = useState<boolean>(false)
+	const [isEdit, setIsEdit] = useState<boolean>(true)
 	const router = useRouter()
 	const defaultValues = { email: '', password: '' }
 	const { t } = useTranslation()
@@ -150,7 +153,6 @@ const Login: FC<any> = ({ mockLogin }) => {
 	///////////////////////////////// HANDLE ///////////////////////////////////////
 
 	const onSubmit = async (data: any): Promise<void> => {
-		console.log('debug click', data)
 		if (!isUndefined(mockLogin)) {
 			await mockLogin(data.email, data.password)
 			return
@@ -167,9 +169,9 @@ const Login: FC<any> = ({ mockLogin }) => {
 	// Redirect if connected
 	useEffect(() => {
 		if (user.isConnected) {
-			//router.push(uriList.dashboard)
+			router.push(uriList.users)
 		}
-	}, [user.isConnected, router])
+	}, [user?.isConnected, router])
 
 	///////////////////////////////// RENDER ///////////////////////////////////////
 
@@ -183,6 +185,7 @@ const Login: FC<any> = ({ mockLogin }) => {
 				<LoginLayoutImg />
 				<LoginLayoutForm>
 					<LoginFormWrapper>
+						{!isEmpty(user?.error) && <InputErrorMessage>L'identifiant ou le mot de passe est incorrect !</InputErrorMessage>}
 						<form onSubmit={handleSubmit(onSubmit)}>
 							<LoginFormTitle>{t('login:page_login_title')}</LoginFormTitle>
 							<LoginFormText>{t('login:page_login_text_description')}</LoginFormText>

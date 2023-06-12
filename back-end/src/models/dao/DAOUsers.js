@@ -28,12 +28,60 @@ const findUserByMail = async function (mail) {
   }
 };
 
+const findUserByMailAndPassword = async function (mail, password) {
+  const sql =
+      "SELECT * FROM utilisateurs WHERE utilisateurs.email='" + mail + "';";
+  try {
+    const result = await new Promise((resolve, reject) => {
+      connection.query(sql, function (error, result, fields) {
+        if (error) {
+          reject(error);
+        } else {
+          let queryResult;
+          Object.keys(result).forEach(function (key) {
+            queryResult = result[key];
+          });
+          resolve(queryResult);
+        }
+      });
+    });
+    if (result && result.password == password) {
+      return { ...result };
+    } else {
+      return null; // Mot de passe incorrect ou utilisateur non trouvé
+    }
+  } catch (err) {
+    console.error("error : ", err);
+    throw err;
+  }
+};
+
 /**
  * return one User from the database
  * @params {int} id - id of User
  */
 const findUserById = async function (id) {
-  return await db.select("*").from("Users").where({ id: id });
+  const sql =
+      "SELECT * FROM utilisateurs WHERE utilisateurs.id='" + id + "';";
+  try {
+    const result = await new Promise((resolve, reject) => {
+      connection.query(sql, function (error, result, fields) {
+        if (error) {
+          reject(error);
+        } else {
+          let queryResult;
+          Object.keys(result).forEach(function (key) {
+            queryResult = result[key];
+          });
+          resolve(queryResult);
+        }
+      });
+    });
+    return { ...result };
+  } catch (err) {
+    console.error("error : ", err);
+    throw err;
+  }
 };
 
 /**
@@ -77,10 +125,32 @@ const findGuestByIdentity = async function (
  * @params {string} pseudo - pseudo of user
  * @params {string} password - password of user
  */
-const addUser = async function (mail, password, pseudo) {
-  await db
-    .insert({ mail: mail, password: password, pseudo: pseudo })
-    .into("Users");
+const addUser = async function (data) {
+  const { lastName, firstName, birthDate, CA, postalAdress, phone, taxes, email, password } = data;
+  const sql = "INSERT INTO utilisateurs (lastName, firstName, birthDate, CA, postalAdress, phone, taxes, email, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  const values = [lastName, firstName, birthDate, CA, postalAdress, phone, taxes, email, password];
+
+  try {
+    const result = await new Promise((resolve, reject) => {
+      connection.query(sql, values, function (error, result, fields) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+
+    if (result.affectedRows > 0) {
+      // L'insertion a réussi, vous pouvez retourner les données insérées si nécessaire
+      return { success: true };
+    } else {
+      return null; // Échec de l'insertion
+    }
+  } catch (err) {
+    console.error("error: ", err);
+    throw err;
+  }
 };
 
 /**
@@ -177,6 +247,7 @@ const getNewGuest = async function (id) {
 
 module.exports = {
   findUserByMail,
+  findUserByMailAndPassword,
   findUserById,
   findGuestById,
   findGuestByIdentity,

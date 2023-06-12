@@ -1,15 +1,15 @@
 const initialState = {
-	
 	user: {
 		isLoading: false,
 		isConnected: false,
 		identity: {
-			privileges:[],
+			privileges: [],
 			firstName: '',
 			lastName: '',
 			userName: '',
 			roleName: '',
-			languageId: 1
+			languageId: 1,
+			userId: 0,
 		},
 		error: {},
 	},

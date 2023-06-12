@@ -1,4 +1,6 @@
 const { generateHashedPassword } = require('../security/crypto')
+const DAOUsers = require("./dao/DAOUsers");
+const {isEmpty} = require("lodash/lang");
 
 /**
  * return one User from the database
@@ -12,7 +14,17 @@ exports.getUserByMail = async function (mail) {
     } else {
         return {status: 404, message:'User not exist'}
     }
-} 
+}
+
+exports.getUserByMailAndPassword = async function (mail, password) {
+  const DAOUsers = require('./dao/DAOUsers')
+  const user = await DAOUsers.findUserByMailAndPassword(mail, password)
+  if (user){
+    return {status: 200, message:user}
+  } else {
+    return {status: 404, message:'User not exist'}
+  }
+}
 
 /**
  * return one User from the database
@@ -69,18 +81,12 @@ exports.getGuestByIdentity = async function(id) {
  */
 exports.addUser = async function (data) {
   const DAOUsers = require('./DAO/DAOUsers')
-  const { mail, password, pseudo } = data
-
-  if (!mail) return {status: 422, message:'Mail required.'}
-  if (!password) return  {status: 422, message:'Password required.'}
-  if (!pseudo) return {status: 422, message:'Pseudo required.'}
-
-  const user = await DAOUsers.findUserByMail(mail)
-  if (user.length === 0){
-      await DAOUsers.addUser(mail, password, pseudo)
-      return {status: 200, message:'User Added !'}
+  const user = await DAOUsers.findUserByMail(data.email)
+  if (isEmpty(user)){
+      await DAOUsers.addUser(data)
+      return {status: 200, message:'Utilisateur ajouté !'}
   } else {
-      return {status: 409, message:'User already exist'} //conflict
+      return {status: 409, message:'E-mail déjà utilisée !'} //conflict
   }
 }
 

@@ -9,11 +9,17 @@ export type RouteObject = {
 
 export const uriList = {
 	login: '/login',
+	users: '/users',
 }
 
 export const routeList: Array<RouteObject> = [
 	{
 		path: uriList.login,
 		isProtected: false,
-	}
+	},
+	{
+		path: uriList.users,
+		isProtected: true,
+		requiredPrivilege: userPrivileges.ADMIN,
+	},
 ]

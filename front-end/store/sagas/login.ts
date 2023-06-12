@@ -4,10 +4,12 @@ import { isUndefined } from 'lodash'
 ///////COMPONENTS///////
 import { put, StrictEffect, call } from 'redux-saga/effects'
 import ActionsTypes from '../../constants/ActionsTypes'
-import { loginActionCreators, globalLoadingActionCreators } from '../actions'
+import { loginActionCreators, globalLoadingActionCreators, toastSuccessActionCreators } from '../actions'
 import * as R from '../../constants/Endpoint'
 import { API } from '../../config/AxiosConfig'
 import * as SagaEffects from 'redux-saga/effects'
+import { bindActionCreators } from 'redux'
+import { useDispatch } from 'react-redux'
 
 const takeLatest = SagaEffects.takeLatest
 
@@ -33,20 +35,16 @@ export const getLogin = function* ({ payload, isMocked, mockedError }: LoginType
 	}
 	const apiCall = R.GET_BEARER_TOKEN()
 	yield put(globalLoadingActionCreators.startLoading())
-
 	try {
 		const token = yield call(() => API.post(apiCall, userCredentials))
 		const userObject: any = {
-			authenticationToken: token.data.jwttoken,
+			authenticationToken: token.data.token,
 		}
 		if (payload.rememberMe) {
 			userObject.email = payload.email
 			userObject.password = payload.password
 		}
 		// TODO : Waiting for current user to be set
-		//const dataOld = yield API.get(R.GET_CURRENT_USER(), { headers: { Authorization: `Bearer ${token.data.authenticationToken}` } })
-		//dataOld.data['authenticationToken'] = token.data.authenticationToken
-		//yield put(loginActionCreators.getLoginSuccess(dataOld.data))
 		yield put(loginActionCreators.getLoginSuccess(userObject))
 	} catch (e) {
 		yield put(loginActionCreators.getLoginFailure(!isUndefined(isMocked) ? mockedError : e.response))

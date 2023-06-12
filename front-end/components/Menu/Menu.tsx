@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect, MutableRefObject, FC } from 'react'
 import styled from 'styled-components'
 import { shallowEqual, useSelector } from 'react-redux'
-import {map, find, cloneDeep, filter, isUndefined, isEmpty} from 'lodash'
+import { map, find, cloneDeep, filter, isUndefined, isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 ///////COMPONENTS///////
 import MenuLink from './MenuLink'
@@ -20,7 +20,6 @@ import IconInventory from '../../assets/icones/menu/inventory.svg'
 import IconStocks from '../../assets/icones/menu/stocks.svg'
 import IconTracking from '../../assets/icones/menu/tracking.svg'
 import IconUsers from '../../assets/icones/menu/users.svg'
-
 
 /////////STYLED/////////
 const MenuCarousel = styled.div`
@@ -83,19 +82,18 @@ type ConfigMenuItemType = {
 	subMenus?: Array<ConfigSubMenuItemType>
 	toggle?: boolean
 	active?: boolean
-	requiredRight?: Number
+	requiredRight?: number
 }
 type ConfigSubMenuItemType = {
 	title: string
 	link: string
-	requiredRight: Number
+	requiredRight: number
 	active?: boolean
 }
 /////////TYPES//////////
 
 const Menu: FC = () => {
-
-	const { user , privileges } = useSelector(
+	const { user, privileges } = useSelector(
 		(state: RootState) => ({
 			user: state.user,
 			privileges: state.user.identity.privileges,
@@ -151,10 +149,11 @@ const Menu: FC = () => {
 		{
 			id: 1,
 			title: t('common:menu_dashboard').toString(),
-			link: uriList.home,
+			link: 'uriList.home',
 			icon: IconHome,
 			nested: false,
 			subMenus: [],
+			active: true,
 		},
 		{
 			id: 2,
@@ -163,55 +162,22 @@ const Menu: FC = () => {
 			icon: IconUsers,
 			nested: false,
 			subMenus: [],
-			requiredRight: userPrivileges?.USERS_MANAGE_VIEW_MENU,
+			active: true,
+			//requiredRight: userPrivileges?.USERS_MANAGE_VIEW_MENU,
 		},
 		{
 			id: 3,
 			title: t('common:menu_stocks').toString(),
 			icon: IconStocks,
 			nested: true,
+			active: true,
 			subMenus: [
 				{
 					title: t('common:menu_stocks__clinic'),
 					link: `${uriList.stocks}${uriList.clinicStocks}`,
-					requiredRight: 1 /*userPrivileges?.STOCK_MANAGE_TRACKING_CLIENT_VIEW_MENU*/,
-				},
-				{
-					title: t('common:menu_stocks__GCA'),
-					link: `${uriList.stocks}${uriList.GCAStocks}`,
-					requiredRight: userPrivileges?.STOCK_MANAGE_TRACKING_GCA_VIEW_MENU,
-				},
-				{
-					title: t('common:menu_stocks__inventory_tracking'),
-					link: `${uriList.stocks}${uriList.inventoryTracking}`,
-					requiredRight: 1 /*userPrivileges?.CLIENT_INVENTORY_VIEW_MENU*/,
+					/*requiredRight: 1 userPrivileges?.STOCK_MANAGE_TRACKING_CLIENT_VIEW_MENU*/
 				},
 			],
-		},
-		{
-			id: 4,
-			title: t('common:menu_tracking').toString(),
-			icon: IconTracking,
-			nested: true,
-			subMenus: [
-				{
-					title: t('common:menu_tracking__return_tracking'),
-					link: `${uriList.tracking}${uriList.returnTracking}`,
-					requiredRight: userPrivileges?.RETURN_TRACKING_VIEW_MENU
-				},
-				{
-					title: t('common:menu_tracking__pose_tracking'),
-					link: `${uriList.tracking}${uriList.poseTracking}`,
-					requiredRight: userPrivileges?.POSE_TRACKING_VIEW_MENU,
-				},
-			],
-		},
-		{
-			id: 5,
-			title: t('common:menu_inventory_app').toString(),
-			icon: IconInventory,
-			link: '',
-			nested: false,
 		},
 	]
 
@@ -223,7 +189,7 @@ const Menu: FC = () => {
 		handleSetToggledNested('reset')
 	}, [toggled])
 
-/*	useEffect(() => {
+	/*	useEffect(() => {
 		const nestedMenu: Array<ConfigMenuItemType> = configMenu.filter(elem => elem.nested )
 		setToggledNested(
 			map(nestedMenu, (elem) => {
@@ -235,12 +201,12 @@ const Menu: FC = () => {
 
 	// We want to show the current navigation on menu
 	useEffect(() => {
-		const nestedMenu: Array<ConfigMenuItemType> = configMenu.filter(elem => elem.nested )
+		const nestedMenu: Array<ConfigMenuItemType> = configMenu.filter((elem) => elem.nested)
 		setToggledNested(
 			map(nestedMenu, (elem) => {
 				let toggledMenu = false
 				elem.subMenus?.forEach((subMenu) => {
-					if (router.pathname === subMenu.link/* || router.pathname.includes(subMenu.link)*/) {
+					if (router.pathname === subMenu.link /* || router.pathname.includes(subMenu.link)*/) {
 						toggledMenu = true
 					}
 				})
@@ -254,23 +220,23 @@ const Menu: FC = () => {
 	// Here we map all menu and subMenu to check if user have privileges to see them
 	// We assign the result to active's attribute on a boolean
 	useEffect(() => {
-		if (!isEmpty(privileges)) {
-
+		/*if (!isEmpty(privileges)) {
 			const cur_menu = cloneDeep(configMenu)
 			map(cur_menu, (menuItem) => {
-				if(!isEmpty(menuItem.subMenus)) {
+				if (!isEmpty(menuItem.subMenus)) {
 					map(menuItem.subMenus, (subMenuItem) => {
 						subMenuItem.active = !isUndefined(privileges.find((privilege: any) => privilege == subMenuItem.requiredRight))
 					})
 				}
-				menuItem.active = !isUndefined(privileges.find((privilege: any) => privilege == menuItem.requiredRight)) || isUndefined(menuItem.requiredRight)
+				menuItem.active =
+					!isUndefined(privileges.find((privilege: any) => privilege == menuItem.requiredRight)) || isUndefined(menuItem.requiredRight)
 			})
-			setCurrentMenu(cur_menu)
-		}
+			setCurrentMenu(cur_menu)*/
+		setCurrentMenu(configMenu)
 	}, [user])
 
 	///////////////////////////////// RENDER ///////////////////////////////////////
-	
+
 	return (
 		<MenuWrapper ref={wrapperRef}>
 			<MenuCarousel>

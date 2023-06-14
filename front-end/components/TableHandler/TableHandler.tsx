@@ -16,6 +16,7 @@ import SearchIcon from '../../assets/icones/global/zoom-in.svg'
 const TableWrapper = styled.div`
 	padding: 10px 20px 20px 20px;
 	background-color: ${theme.colors.white};
+	flex: 0 0 100%;
 `
 const TableHeaderWrapper = styled.div`
 	display: flex;
@@ -29,6 +30,7 @@ const TableTitleWrapper = styled.span`
 `
 const CustomReactDataGrid = styled(ReactDataGrid)`
 	background-color: ${theme.colors.white};
+	height: 65vh;
 	border: 1px solid ${theme.colors.light};
 	& .rdg-header-row {
 		background-color: ${theme.colors.light};
@@ -48,6 +50,7 @@ const CustomReactDataGrid = styled(ReactDataGrid)`
 	& .rdg-cell {
 		border-inline-end: 1px solid ${theme.colors.light};
 		border-block-end: 1px solid ${theme.colors.light};
+		user-select: none;
 	}
 	${(props: CustomReactDataGridProps) =>
 		props.hasActions &&
@@ -62,6 +65,20 @@ const CustomReactDataGrid = styled(ReactDataGrid)`
 		${(props: CustomReactDataGridProps) => (!isUndefined(props.rowSizing) ? props.rowSizing : 'auto')}
 	) !important;
 	overflow: auto;
+	scrollbar-width: thin;
+	scrollbar-color: ${theme.colors.light} ${theme.colors.white};
+	&::-webkit-scrollbar {
+		width: 10px;
+	}
+	&::-webkit-scrollbar-track {
+		background-color: ${theme.colors.white};
+	}
+	&::-webkit-scrollbar-thumb {
+		background-color: ${theme.colors.light};
+	}
+	&::-webkit-scrollbar-thumb:hover {
+		background-color: ${theme.colors.table.oddHover};
+	}
 `
 const FreeSearchWrapper = styled.div`
 	position: relative;
@@ -119,6 +136,7 @@ type TableHandlerProps = {
 	createRows: Array<any>
 	cols: Array<any>
 	config: tableConfigProps
+	pagingConfig?: any
 	paging: any
 	sortSetter: Dispatch<SetStateAction<string | undefined>>
 }
@@ -128,8 +146,7 @@ type CustomReactDataGridProps = {
 }
 /////////TYPES//////////
 
-const TableHandler: FC<TableHandlerProps> = ({ createRows, cols, config, paging, sortSetter }): React.ReactElement => {
-
+const TableHandler: FC<TableHandlerProps> = ({ createRows, cols, config, pagingConfig, paging, sortSetter }): React.ReactElement => {
 	const [rows, setRows] = useState(createRows)
 	const [sortColumns, setSortColumns] = useState<SortColumn[]>(!isUndefined(config?.defaultSort) ? [config.defaultSort] : [])
 	const searchRef = useRef()
@@ -195,7 +212,6 @@ const TableHandler: FC<TableHandlerProps> = ({ createRows, cols, config, paging,
 	}, [sortColumns])
 
 	///////////////////////////////// RENDER ///////////////////////////////////////
-
 	return (
 		<>
 			<TableWrapper>
@@ -229,8 +245,17 @@ const TableHandler: FC<TableHandlerProps> = ({ createRows, cols, config, paging,
 					className={'fill-grid'}
 					hasActions={!isUndefined(find(columns, { key: 'Actions' }) ? true : false)}
 					rowSizing={config.rowSizing}
+					enableVirtualization={false}
 				/>
-				{!isUndefined(paging) && <Paging totalRow={paging?.totalElements} totalPage={paging?.totalPages} fnSendTo={paging?.fnSendTo} />}
+				{!isUndefined(paging) && pagingConfig && (
+					<Paging
+						totalRow={paging?.totalElements}
+						totalPage={paging?.totalPages}
+						fnSendTo={paging?.fnSendTo}
+						pagingConfig={pagingConfig}
+						mode="pagingSelection"
+					/>
+				)}
 			</TableWrapper>
 		</>
 	)

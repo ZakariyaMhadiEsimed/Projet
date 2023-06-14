@@ -9,7 +9,10 @@ export type RouteObject = {
 
 export const uriList = {
 	login: '/login',
-	users: '/users',
+	dashboard: '/dashboard',
+	customers: '/customers',
+	projects: '/projects',
+	bill: '/bill',
 }
 
 export const routeList: Array<RouteObject> = [
@@ -18,7 +21,22 @@ export const routeList: Array<RouteObject> = [
 		isProtected: false,
 	},
 	{
-		path: uriList.users,
+		path: uriList.dashboard,
+		isProtected: true,
+		requiredPrivilege: userPrivileges.ADMIN,
+	},
+	{
+		path: uriList.customers,
+		isProtected: true,
+		requiredPrivilege: userPrivileges.ADMIN,
+	},
+	{
+		path: uriList.projects,
+		isProtected: true,
+		requiredPrivilege: userPrivileges.ADMIN,
+	},
+	{
+		path: uriList.bill,
 		isProtected: true,
 		requiredPrivilege: userPrivileges.ADMIN,
 	},

@@ -83,6 +83,7 @@ exports.addUser = async function (data) {
   const DAOUsers = require('./DAO/DAOUsers')
   const user = await DAOUsers.findUserByMail(data.email)
   if (isEmpty(user)){
+      data.password = generateHashedPassword(data.password)
       await DAOUsers.addUser(data)
       return {status: 200, message:'Utilisateur ajouté !'}
   } else {
@@ -124,12 +125,22 @@ exports.updateUser = async function (id, data) {
   if (!foundUser) {
     throw new Error('User not found') 
   }
-  foundUser[0].pseudo = data.pseudo || foundUser.pseudo 
-  foundUser[0].mail = data.mail || foundUser.mail 
-  foundUser[0].password = data.password ? generateHashedPassword(data.password) : foundUser[0].password 
-
-  await DAOUsers.updateUser(foundUser[0].id, foundUser[0].mail, foundUser[0].password, foundUser[0].pseudo)
-  return true 
+  foundUser.firstName = data.firstName || foundUser.firstName
+  foundUser.lastName = data.lastName || foundUser.lastName
+  foundUser.birthDate = data.birthDate || foundUser.birthDate
+  foundUser.CA = data.CA || foundUser.CA
+  foundUser.postalAdress = data.postalAdress || foundUser.postalAdress
+  foundUser.phone = data.phone || foundUser.phone
+  foundUser.taxes = data.taxes || foundUser.taxes
+  foundUser.email = data.email || foundUser.email
+  foundUser.password = data.password ? generateHashedPassword(data.password) : foundUser[0].password
+  const result = await DAOUsers.updateUser(foundUser)
+  if(result !== null) {
+    return {status: 200, message:'Utilisateur modifié !'}
+  }
+  else {
+    return {status: 400, message:'Utilisateur non-modifié !'}
+  }
 }
 
 /**

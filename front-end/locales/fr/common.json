@@ -42,14 +42,8 @@
 	"filters_dateFilter_datePicker_label": "Date",
 	"filters_dateFilter_datePicker_from": "Du",
 	"filters_dateFilter_datePicker_to": "Au",
-	"menu_dashboard": "Accueil",
-	"menu_users": "Gestion utilisateurs",
-	"menu_stocks": "Gestion stocks",
-	"menu_stocks__clinic": "Suivi des stocks (clinique)",
-	"menu_stocks__GCA": "Suivi des stocks GCA",
-	"menu_stocks__inventory_tracking": "Suivi des inventaires",
-	"menu_tracking": "Suivis",
-	"menu_tracking__return_tracking": "Suivi des retours",
-	"menu_tracking__pose_tracking": "Suivi des poses",
-	"menu_inventory_app": "Appli inventaire"
+	"menu_dashboard": "Tableau de bord",
+	"menu_customers": "Clients",
+	"menu_projects": "Projets",
+	"menu_bill": "Factures"
 }

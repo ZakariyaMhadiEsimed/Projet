@@ -12,16 +12,18 @@ const NumberPageLabel = styled.label`
 	display: flex;
 	height: 32px;
 	width: 32px;
+	border-radius: 8px;
 	justify-content: center;
 	align-items: center;
 	background-color: ${(props: NumberPageLabelProps) => (props.isActive ? theme.colors.primary : theme.colors.white)};
-	color: ${(props: NumberPageLabelProps) => (props.isActive ? theme.colors.white : theme.colors.dark_100)};
+	color: ${(props: NumberPageLabelProps) => (props.isActive ? theme.colors.white : theme.colors.dark)};
 	cursor: pointer;
-	border: ${(props: NumberPageLabelProps) => (props.isActive ? 'none' : `1px solid ${theme.colors.light_400}`)};
+	border: ${(props: NumberPageLabelProps) => (props.isActive ? 'none' : `1px solid ${theme.colors.border.grey}`)};
 `
 const NumberPageInput = styled.input`
 	display: none;
 	height: 32px;
+	border-radius: 50%;
 	width: 32px;
 	justify-content: center;
 	align-items: center;
@@ -39,7 +41,6 @@ type FactoryPageSelectedProps = {
 /////////TYPES//////////
 
 const FactoryPageSelected: FC<FactoryPageSelectedProps> = ({ options, handleSwapPage, pageValue, register }) => {
-	
 	const lastOption = last<any>(options) - 1
 	const lastOptionStr = lastOption.toString()
 

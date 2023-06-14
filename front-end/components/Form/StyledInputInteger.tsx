@@ -39,7 +39,7 @@ const StyledInputInteger = (props: StyledInputIntegerProps) => {
 	}
 
 	useEffect(() => {
-		if (value) setValueFormatted(value.toString().replace(/(\d{2})(?=\d)/g, '$1 '))
+		if (value) setValueFormatted(value.toString().replace(/(\d{3})(?=\d)/g, '$1 '))
 	}, [value])
 
 	return (

@@ -2,24 +2,20 @@
 import React, { useState, useRef, useEffect, MutableRefObject, FC } from 'react'
 import styled from 'styled-components'
 import { shallowEqual, useSelector } from 'react-redux'
-import { map, find, cloneDeep, filter, isUndefined, isEmpty } from 'lodash'
+import { map, find, cloneDeep } from 'lodash'
 import { useTranslation } from 'react-i18next'
 ///////COMPONENTS///////
 import MenuLink from './MenuLink'
 import { uriList } from '../../constants/RouteList'
 //import UserAuthorizationLayout from '../../../components/UserAuthorizationLayout'
-import { userPrivileges } from '../../constants/PrivilegesList'
 import { useRouter } from 'next/router'
 import theme from '../../theme/theme'
 import { RootState } from '../../interfaces/store/store.interfaces'
 /////////ASSETS/////////
-/*import MenuLogoIcon from '../../../assets/icones/menu/burger-menu-icon.svg'
-import MenuCarouselBottomIcon from '../../../assets/icones/menu/menu-dropdown.svg'*/
 import IconHome from '../../assets/icones/menu/home.svg'
 import IconInventory from '../../assets/icones/menu/inventory.svg'
-import IconStocks from '../../assets/icones/menu/stocks.svg'
-import IconTracking from '../../assets/icones/menu/tracking.svg'
 import IconUsers from '../../assets/icones/menu/users.svg'
+import IconBill from '../../assets/icones/menu/tracking.svg'
 
 /////////STYLED/////////
 const MenuCarousel = styled.div`
@@ -93,7 +89,7 @@ type ConfigSubMenuItemType = {
 /////////TYPES//////////
 
 const Menu: FC = () => {
-	const { user, privileges } = useSelector(
+	const { user } = useSelector(
 		(state: RootState) => ({
 			user: state.user,
 			privileges: state.user.identity.privileges,
@@ -149,7 +145,7 @@ const Menu: FC = () => {
 		{
 			id: 1,
 			title: t('common:menu_dashboard').toString(),
-			link: 'uriList.home',
+			link: uriList.dashboard,
 			icon: IconHome,
 			nested: false,
 			subMenus: [],
@@ -157,8 +153,8 @@ const Menu: FC = () => {
 		},
 		{
 			id: 2,
-			title: t('common:menu_users').toString(),
-			link: uriList.users,
+			title: t('common:menu_customers').toString(),
+			link: uriList.customers,
 			icon: IconUsers,
 			nested: false,
 			subMenus: [],
@@ -167,6 +163,26 @@ const Menu: FC = () => {
 		},
 		{
 			id: 3,
+			title: t('common:menu_projects').toString(),
+			link: uriList.projects,
+			icon: IconInventory,
+			nested: false,
+			subMenus: [],
+			active: true,
+			//requiredRight: userPrivileges?.USERS_MANAGE_VIEW_MENU,
+		},
+		{
+			id: 4,
+			title: t('common:menu_bill').toString(),
+			link: uriList.bill,
+			icon: IconBill,
+			nested: false,
+			subMenus: [],
+			active: true,
+			//requiredRight: userPrivileges?.USERS_MANAGE_VIEW_MENU,
+		},
+		/*{
+			id: 5,
 			title: t('common:menu_stocks').toString(),
 			icon: IconStocks,
 			nested: true,
@@ -175,10 +191,10 @@ const Menu: FC = () => {
 				{
 					title: t('common:menu_stocks__clinic'),
 					link: `${uriList.stocks}${uriList.clinicStocks}`,
-					/*requiredRight: 1 userPrivileges?.STOCK_MANAGE_TRACKING_CLIENT_VIEW_MENU*/
+					requiredRight: 1 userPrivileges?.STOCK_MANAGE_TRACKING_CLIENT_VIEW_MENU
 				},
 			],
-		},
+		},*/
 	]
 
 	/////////////////////////////// USE EFFECT /////////////////////////////////////

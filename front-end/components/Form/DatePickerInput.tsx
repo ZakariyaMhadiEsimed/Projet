@@ -20,7 +20,7 @@ interface DatePickerInputProps {
 }
 const DatePickerInput = (props: DatePickerInputProps) => {
 	const { value, onChange, maxDate, hasError } = props
-	const [selectedDate, setSelectedDate] = useState(value ? new Date(value) : null)
+	const [selectedDate, setSelectedDate] = useState(null)
 	const handleDateChange = (date: any) => {
 		setSelectedDate(date)
 		if (onChange && !isNull(date)) {
@@ -28,8 +28,15 @@ const DatePickerInput = (props: DatePickerInputProps) => {
 		} else onChange('')
 	}
 
+	const parseDate = (value) => {
+		const [day, month, year] = value.split('-')
+		const isoDateString = `${year}-${month}-${day}`
+		return moment(new Date(isoDateString)).toDate()
+	}
+
 	useEffect(() => {
-		if (value) setSelectedDate(new Date(value))
+		if (value && value != 'Invalid Date') setSelectedDate(parseDate(value))
+		else setSelectedDate(null)
 	}, [value])
 
 	return (
@@ -43,7 +50,6 @@ const DatePickerInput = (props: DatePickerInputProps) => {
 			yearDropdownItemNumber={100}
 			maxDate={maxDate}
 			isClearable
-			//maxDate={moment(new Date()).subtract(18, 'years').toDate()}
 			placeholderText="Sélectionner une date"
 			hasError={hasError}
 		/>

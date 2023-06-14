@@ -9,8 +9,8 @@ import theme from '../../../../theme/theme'
 
 /////////STYLED/////////
 const PagingListWrapper = styled.div`
-	display: grid;
-	grid-template-columns: repeat(5, max-content);
+	display: flex;
+	grid-template-columns: max-content;
 	grid-column-gap: 5px;
 	justify-content: center;
 	align-items: center;
@@ -23,9 +23,11 @@ const NumberPageLabel = styled.label`
 	align-items: center;
 	background-color: ${(props: NumberPageLabelProps) => (props.isActive ? theme.colors.primary : theme.colors.white)};
 	cursor: pointer;
-	color: ${(props: NumberPageLabelProps) => (props.isActive ? theme.colors.white : theme.colors.dark_100)};
-	border: ${(props: NumberPageLabelProps) => (props.isActive ? 'none' : `1px solid ${theme.colors.light_400}`)};
+	color: ${(props: NumberPageLabelProps) => (props.isActive ? theme.colors.white : theme.colors.neutral_900)};
+	border: ${(props: NumberPageLabelProps) => (props.isActive ? 'none' : `1px solid ${theme.colors.border.paging}`)};
 	box-sizing: border-box;
+	border-radius: 8px;
+	${(props: NumberPageLabelProps) => props.isActive && `box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.16);`}
 `
 const NumberPageInput = styled.input`
 	display: none;
@@ -37,7 +39,7 @@ const NumberPageInput = styled.input`
 	background-color: ${theme.colors.white};
 `
 const ToContinue = styled.p`
-	display: flex;P
+	display: flex;
 	margin: 0 0;
 	padding: 0 0;
 `
@@ -58,7 +60,6 @@ type PagingListProps = {
 /////////TYPES//////////
 
 const PagingList: FC<PagingListProps> = ({ options, register, setValue, getValues, totalPage, submitHandler }: any) => {
-	
 	const lastOption = last<any>(options).toString()
 
 	///////////////////////////////// HANDLE ///////////////////////////////////////

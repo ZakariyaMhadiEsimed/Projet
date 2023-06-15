@@ -5,6 +5,7 @@ const {
 } = require("./middlewares");
 const userRoutes = require("../controllers/user.routes");
 const customersRoutes = require("../controllers/customers.routes");
+const projectsRoutes = require("../controllers/projects.routes")
 const authRoutes = require("../controllers/auth.routes");
 
 class WebServer {
@@ -33,6 +34,7 @@ class WebServer {
   _initializeRoutes() {
     this.app.use("/users", userRoutes.initializeRoutes());
     this.app.use("/customers", customersRoutes.initializeRoutes());
+    this.app.use("/projects", projectsRoutes.initializeRoutes());
     this.app.use(authRoutes.initializeRoutes());
   }
 }

@@ -29,8 +29,8 @@ interface CustomColumn extends Column<userItem> {
 ///////INTERFACES///////
 
 /////////TYPES//////////
-type usersManagerProps = {
-	users?: any | undefined
+type CustomersManagerProps = {
+	Customers?: any | undefined
 	error?: any | undefined
 }
 type userItem = {
@@ -47,7 +47,7 @@ type userItem = {
 
 const initialPageSize = 20
 
-const UsersManager: NextPage<usersManagerProps> = (props): JSX.Element | null => {
+const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element | null => {
 	const { t } = useTranslation()
 	const [prevFilters, setPrevFilters] = useState<HeaderFilters | undefined>() // Previous filters (for 'updated' var check on UseCheckAll)
 	const [filters, setFilters, handleCheckElements] = UseCheckAll(prevFilters, undefined) // Our current filters
@@ -58,7 +58,7 @@ const UsersManager: NextPage<usersManagerProps> = (props): JSX.Element | null =>
 	const [tableConfig, setTableConfig] = useState<tableConfigProps | undefined>()
 	const [sortingColumn, setSortingColumn] = useState<string>()
 	const [currentPaging, setCurrentPaging] = useState<any>({
-		fnSendTo: (paging: queryParamPagingProps) => handlePagingUsersManager(paging),
+		fnSendTo: (paging: queryParamPagingProps) => handlePagingCustomersManager(paging),
 	})
 	// REDUX actions
 	const actionsErrorManager = bindActionCreators(errorManagerActionCreators, useDispatch())
@@ -82,13 +82,13 @@ const UsersManager: NextPage<usersManagerProps> = (props): JSX.Element | null =>
 	/*const rowActionsConfig = {
 		actionsList: [
 			{
-				name: t('users:page_users_table_column_actions_editUser'),
-				clickAction: (row: userItem) => router.push(`${uriList.users}${uriList.usersEdit}/${row.userId}`),
+				name: t('Customers:page_Customers_table_column_actions_editUser'),
+				clickAction: (row: userItem) => router.push(`${uriList.Customers}${uriList.CustomersEdit}/${row.userId}`),
 				isVisible: (row: userItem) => true,
 				disabled: (row: userItem) => !row.enabled,
 			},
 			{
-				name: t('users:page_users_table_column_actions_deleteUser'),
+				name: t('Customers:page_Customers_table_column_actions_deleteUser'),
 				clickAction: (row: userItem) => handleModalDectivate(row),
 				isVisible: (row: userItem) => true,
 				disabled: (row: userItem) => !row.enabled,
@@ -193,7 +193,7 @@ const UsersManager: NextPage<usersManagerProps> = (props): JSX.Element | null =>
 				return { error: true, message: JSON.stringify(e) }
 			})
 		if (!userDelete.error) {
-			actionsToastSuccess.hydrateToast(t('users:page_users_toast_deletedUser'))
+			actionsToastSuccess.hydrateToast(t('Customers:page_Customers_toast_deletedUser'))
 			handleCloseModals()
 			handlePageRefresh()
 			//setUpdated(true)
@@ -214,7 +214,7 @@ const UsersManager: NextPage<usersManagerProps> = (props): JSX.Element | null =>
 				setCurrentPaging({
 					totalElements: rst.headerContent.contentPaginated.totalElements,
 					totalPages: rst.headerContent.contentPaginated.totalPages,
-					fnSendTo: (paging: queryParamPagingProps) => handlePagingUsersManager(paging),
+					fnSendTo: (paging: queryParamPagingProps) => handlePagingCustomersManager(paging),
 				})
 			}
 			actionsGlobalLoading.endLoading()
@@ -222,7 +222,7 @@ const UsersManager: NextPage<usersManagerProps> = (props): JSX.Element | null =>
 		a()
 	}
 
-	const handlePagingUsersManager = (paging: queryParamPagingProps): void => {
+	const handlePagingCustomersManager = (paging: queryParamPagingProps): void => {
 		actionsGlobalLoading.startLoading()
 		const a = async (): Promise<void> => {
 			const rst = await fetchPostAllCustomers(parseInt(paging.page), parseInt(paging.size))
@@ -253,7 +253,7 @@ const UsersManager: NextPage<usersManagerProps> = (props): JSX.Element | null =>
 			filtersTranslationKeys: {},
 			handleSubmit: handleSubmit,
 		},
-		pageActions: [() => <PageActionsButtonLink href={''}>{t('users:page_users_button_usersCreate')}</PageActionsButtonLink>],
+		pageActions: [() => <PageActionsButtonLink href={''}>{t('Customers:page_Customers_button_CustomersCreate')}</PageActionsButtonLink>],
 	}
 
 	/////////////////////////////// USE EFFECT /////////////////////////////////////
@@ -281,7 +281,7 @@ const UsersManager: NextPage<usersManagerProps> = (props): JSX.Element | null =>
 			setCurrentPaging({
 				totalElements: props.headerContent.contentPaginated.totalElements,
 				totalPages: props.headerContent.contentPaginated.totalPages,
-				fnSendTo: (paging: queryParamPagingProps) => handlePagingUsersManager(paging),
+				fnSendTo: (paging: queryParamPagingProps) => handlePagingCustomersManager(paging),
 			})
 			setConfigPaging({
 				register: registerPaging,
@@ -299,7 +299,7 @@ const UsersManager: NextPage<usersManagerProps> = (props): JSX.Element | null =>
 			cpg.totalElements = props.headerContent.contentPaginated.totalElements
 			cpg.totalPages = props.headerContent.contentPaginated.totalPages
 		}
-		cpg.fnSendTo = (paging: queryParamPagingProps) => handlePagingUsersManager(paging)
+		cpg.fnSendTo = (paging: queryParamPagingProps) => handlePagingCustomersManager(paging)
 		setCurrentPaging(cpg)
 		handleSubmit()
 	}, [filters, props])
@@ -325,7 +325,7 @@ const UsersManager: NextPage<usersManagerProps> = (props): JSX.Element | null =>
 
 export async function getServerSideProps(ctx: {
 	req?: { headers: { cookie?: string | undefined } } | undefined
-}): Promise<{ props: usersManagerProps }> {
+}): Promise<{ props: CustomersManagerProps }> {
 	const cookie = cookies(ctx)
 
 	if (!isUndefined(cookie.user)) {
@@ -363,4 +363,4 @@ export async function getServerSideProps(ctx: {
 	}
 }
 
-export default UsersManager
+export default CustomersManager

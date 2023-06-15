@@ -47,3 +47,7 @@ export function PUT_UPDATE_USER(): string {
 export function POST_ALL_CUSTOMERS(query: any): string {
 	return `/customers/all?page=${query.page}&size=${query.size}`
 }
+
+export function POST_ALL_PROJECTS(query: any): string {
+	return `/projects/all?page=${query.page}&size=${query.size}`
+}

@@ -51,3 +51,7 @@ export function POST_ALL_CUSTOMERS(query: any): string {
 export function POST_ALL_PROJECTS(query: any): string {
 	return `/projects/all?page=${query.page}&size=${query.size}`
 }
+
+export function POST_ALL_BILLS(query: any): string {
+	return `/bills/all?page=${query.page}&size=${query.size}`
+}

@@ -7,7 +7,7 @@ const userRoutes = require("../controllers/user.routes");
 const customersRoutes = require("../controllers/customers.routes");
 const projectsRoutes = require("../controllers/projects.routes")
 const authRoutes = require("../controllers/auth.routes");
-
+const billsRoutes = require("../controllers/bills.routes")
 class WebServer {
   app = undefined;
   port = 3001;
@@ -35,6 +35,7 @@ class WebServer {
     this.app.use("/users", userRoutes.initializeRoutes());
     this.app.use("/customers", customersRoutes.initializeRoutes());
     this.app.use("/projects", projectsRoutes.initializeRoutes());
+    this.app.use("/bills", billsRoutes.initializeRoutes());
     this.app.use(authRoutes.initializeRoutes());
   }
 }

@@ -1,13 +1,12 @@
 ////////LIBRARY/////////
-import React from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import { map } from 'lodash'
 import { useTranslation } from 'react-i18next'
-import { FC } from 'react'
 import { UseFormGetValues, UseFormRegister, UseFormSetValue } from 'react-hook-form'
 ///////COMPONENTS///////
 import PagingList from './PagingList'
-import { SelectInputWrapper, SelectInput } from '../../../theme/GlobalCss'
+import { SelectInput, SelectInputWrapper } from '../../../theme/GlobalCss'
 import theme from '../../../theme/theme'
 
 /////////STYLED/////////
@@ -18,13 +17,19 @@ const PagingSelectionWrapper = styled.div`
 	justify-content: center;
 	align-items: center;
 	font-size: ${theme.text.fontSize.fs};
+	width: 100%;
+	padding-right: 220px;
+	padding-bottom: 20px;
+	user-select: none;
 `
 const SelectWrapper = styled.div`
 	display: grid;
-	grid-template-columns: repeat(5, minmax(min-content, max-content));
+	grid-template-columns: repeat(2, minmax(min-content, max-content));
 	grid-column-gap: 5px;
 	justify-content: center;
 	align-items: center;
+	position: absolute;
+	right: 0;
 `
 const PagingWrapper = styled.div`
 	display: grid;
@@ -32,6 +37,10 @@ const PagingWrapper = styled.div`
 	grid-column-gap: 10px;
 	justify-content: center;
 	align-items: center;
+`
+const EmptyWrapper = styled.div`
+	width: 32px;
+	height: 32px;
 `
 const ArrowWrapper = styled.div`
 	display: flex;
@@ -42,30 +51,44 @@ const ArrowWrapper = styled.div`
 	background-color: ${theme.colors.white};
 	cursor: pointer;
 	box-sizing: border-box;
-	border: 1px solid ${theme.colors.light_400};
-`
-const LeftArrow = styled.div`
-	border-right: 8px solid ${theme.colors.dark_100};
-	border-top: 6px solid transparent;
-	border-bottom: 6px solid transparent;
-	transition: all 0.5s ease;
-`
-const RightArrow = styled.div`
-	border-left: 8px solid ${theme.colors.dark_100};
-	border-top: 6px solid transparent;
-	border-bottom: 6px solid transparent;
-	transition: all 0.5s ease;
-`
+	border: 1px solid ${theme.colors.border.grey};
+	border-radius: 8px;
+	transition: all 0.1s ease;
 
-const SelectInputWrapperCustom = styled(SelectInputWrapper)`
-	&::after {
-		border-radius: 0px;
+	&:hover {
+		border: none;
+		background-color: ${theme.colors.primary};
+
+		& > div.paging-left-arrow {
+			border-right: 8px solid ${theme.colors.white};
+		}
+
+		& > div.paging-right-arrow {
+			border-left: 8px solid ${theme.colors.white};
+		}
 	}
 `
-
+const LeftArrow = styled.div`
+	border-right: 8px solid ${theme.colors.neutral_900};
+	border-top: 6px solid transparent;
+	border-bottom: 6px solid transparent;
+	transition: all 0.1s ease;
+`
+const RightArrow = styled.div`
+	border-left: 8px solid ${theme.colors.neutral_900};
+	border-top: 6px solid transparent;
+	border-bottom: 6px solid transparent;
+	transition: all 0.1s ease;
+`
+const SelectInputWrapperCustom = styled(SelectInputWrapper)`
+	&::after {
+		border-radius: 0 8px 8px 0;
+	}
+`
 const SelectInputCustom = styled(SelectInput)`
-	border-radius: 0px;
-	height: 35px;
+	border-radius: 8px;
+	height: 32px;
+	background-color: ${theme.colors.white};
 `
 /////////STYLED/////////
 
@@ -80,11 +103,9 @@ export type PagingSelectionProps = {
 /////////TYPES//////////
 
 const PagingSelection: FC<PagingSelectionProps> = ({ totalPage, register, setValue, getValues, onSubmit }) => {
-
 	const { t } = useTranslation()
 	let options = new Array(totalPage || 1)
 	options = map(options, (_opt, key) => key + 1)
-
 	///////////////////////////////// HANDLE ///////////////////////////////////////
 
 	const handleNextPaging = (): void => {
@@ -103,14 +124,24 @@ const PagingSelection: FC<PagingSelectionProps> = ({ totalPage, register, setVal
 		onSubmit(getValues())
 	}
 
+	const handleChange = (e: any) => {
+		e.stopPropagation()
+		setValue('goToPage', e.target.value)
+		onSubmit(getValues())
+	}
+
 	///////////////////////////////// RENDER ///////////////////////////////////////
 
 	return (
 		<PagingSelectionWrapper>
 			<PagingWrapper>
-				<ArrowWrapper onClick={handlePrevPaging}>
-					<LeftArrow />
-				</ArrowWrapper>
+				{Number(getValues('goToPage')) + 1 > 1 ? (
+					<ArrowWrapper onClick={handlePrevPaging}>
+						<LeftArrow className="paging-left-arrow" />
+					</ArrowWrapper>
+				) : (
+					<EmptyWrapper />
+				)}
 				<PagingList
 					options={options}
 					setValue={setValue}
@@ -119,14 +150,18 @@ const PagingSelection: FC<PagingSelectionProps> = ({ totalPage, register, setVal
 					totalPage={totalPage}
 					submitHandler={onSubmit}
 				/>
-				<ArrowWrapper onClick={handleNextPaging}>
-					<RightArrow />
-				</ArrowWrapper>
+				{Number(getValues('goToPage')) + 1 < totalPage ? (
+					<ArrowWrapper onClick={handleNextPaging}>
+						<RightArrow className="paging-right-arrow" />
+					</ArrowWrapper>
+				) : (
+					<EmptyWrapper />
+				)}
 			</PagingWrapper>
 			<SelectWrapper>
 				<p>{`${t('common:common_text_go_to_page')} :`}</p>
 				<SelectInputWrapperCustom>
-					<SelectInputCustom name="goToPage" {...register}>
+					<SelectInputCustom onChange={handleChange} {...register}>
 						{map(options, (opt, key) => (
 							<option key={key} value={key}>
 								{opt}

@@ -1,7 +1,6 @@
 ////////LIBRARY/////////
 import React, { FC } from 'react'
 import styled from 'styled-components'
-import { useForm } from 'react-hook-form'
 import { toNumber } from 'lodash'
 ///////COMPONENTS///////
 import RowPerPage from './RowPerPage'
@@ -12,7 +11,8 @@ const PagingWrapper = styled.form`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-top: 30px;
+	${(props: PagingWrapperProps) => props.mode === 'pagingSelection' && `margin-top: 30px; position: relative;`}
+	${(props: PagingWrapperProps) => props.mode === 'rowPerPage' && `margin-left: auto`}
 `
 /////////STYLED/////////
 
@@ -21,30 +21,19 @@ export type queryParamPagingProps = {
 	page: string
 	size: string
 }
+type PagingWrapperProps = {
+	mode: string
+}
 type PagingProps = {
 	totalRow: number
 	totalPage: number
 	fnSendTo: (paging: queryParamPagingProps) => void
+	pagingConfig: any
+	mode: 'rowPerPage' | 'pagingSelection'
 }
 /////////TYPES//////////
 
-const Paging: FC<PagingProps> = ({ totalRow, totalPage, fnSendTo }) => {
-	
-	/*const { paggingConfig } = useSelector(
-		(state) => ({
-			paggingConfig: state.user.paggingConfig,
-		}),
-		shallowEqual
-	)*/
-
-	const { register, handleSubmit, setValue, getValues } = useForm({
-		defaultValues: {
-			rowPerPage: '250',
-			tmpGoTo: '0',
-			goToPage: '0',
-		},
-	})
-
+const Paging: FC<PagingProps> = ({ totalRow, totalPage, fnSendTo, pagingConfig, mode }) => {
 	///////////////////////////////// HANDLE ///////////////////////////////////////
 
 	const onSubmit = (data: any): void => {
@@ -53,7 +42,7 @@ const Paging: FC<PagingProps> = ({ totalRow, totalPage, fnSendTo }) => {
 			page = Math.floor(totalRow / data.rowPerPage)
 		}
 		if (page < toNumber(data.goToPage)) {
-			setValue('goToPage', '0')
+			pagingConfig.setValue('goToPage', '0')
 			data.goToPage = '0'
 			data.tmpGoTo = '0'
 		}
@@ -77,9 +66,17 @@ const Paging: FC<PagingProps> = ({ totalRow, totalPage, fnSendTo }) => {
 	///////////////////////////////// RENDER ///////////////////////////////////////
 
 	return (
-		<PagingWrapper onChange={handleSubmit(onSubmit)}>
-			<RowPerPage totalRow={totalRow} register={register} />
-			<PagingSelection totalPage={totalPage} register={register} setValue={setValue} getValues={getValues} onSubmit={onSubmit} />
+		<PagingWrapper onChange={pagingConfig.handleSubmit(onSubmit)} mode={mode}>
+			{mode === 'rowPerPage' && <RowPerPage totalRow={totalRow} register={pagingConfig.register} />}
+			{mode === 'pagingSelection' && (
+				<PagingSelection
+					totalPage={totalPage}
+					register={pagingConfig.register}
+					setValue={pagingConfig.setValue}
+					getValues={pagingConfig.getValues}
+					onSubmit={onSubmit}
+				/>
+			)}
 		</PagingWrapper>
 	)
 }

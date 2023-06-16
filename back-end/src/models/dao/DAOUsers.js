@@ -1,4 +1,6 @@
 const connection = require("../db/index.js");
+const bcrypt = require("bcryptjs");
+const {passwordsAreEqual} = require("../../security/crypto");
 
 /**
  * return one User from the database
@@ -45,7 +47,7 @@ const findUserByMailAndPassword = async function (mail, password) {
         }
       });
     });
-    if (result && result.password == password) {
+    if (result && passwordsAreEqual(password, result.password)) {
       return { ...result };
     } else {
       return null; // Mot de passe incorrect ou utilisateur non trouvé
@@ -77,46 +79,12 @@ const findUserById = async function (id) {
         }
       });
     });
+    result.password = ''
     return { ...result };
   } catch (err) {
     console.error("error : ", err);
     throw err;
   }
-};
-
-/**
- * return one Guest from the database
- * @params {int} id - id of guest
- */
-const findGuestById = async function (id) {
-  return await db.select("*").from("Guests").where({ id: id });
-};
-
-/**
- * return a list of meet for a guest from the database
- * @params {object} data - contain firstName, lastName and birthDate
- */
-const findGuestByIdentity = async function (
-  sexe,
-  firstName,
-  lastName,
-  birthDate
-) {
-  const guests = await db.select("*").from("Guests").where({
-    sexe: sexe,
-    firstName: firstName,
-    lastName: lastName,
-    birthDate: birthDate,
-    hasShare: "true",
-  });
-  for (let i = 0; i < guests.length; i++) {
-    const userInfo = await db
-      .select("*")
-      .from("Users")
-      .where({ id: guests[i].userId });
-    guests[i].userPseudo = userInfo[0].pseudo;
-  }
-  return guests;
 };
 
 /**
@@ -154,108 +122,45 @@ const addUser = async function (data) {
 };
 
 /**
- * add new Guest in database
- * @params {int} id - id of user
- * @params {string} firstName - firstName of guest
- * @params {string} lastName - lastName of guest
- * @params {string} birthDate - birthDate of guest
- */
-const addGuest = async function (id, sexe, firstName, lastName, birthDate) {
-  await db
-    .insert({
-      userId: id,
-      sexe: sexe,
-      firstName: firstName,
-      lastName: lastName,
-      birthDate: birthDate,
-      meetDate: "",
-      score: "",
-      note: "",
-    })
-    .into("Guests");
-};
-
-/**
  * update User in database
  * @params {int} id - id of User
  * @params {string} pseudo - name of user
  * @params {string} lastName - lastName of user
  * @params {string} password - password of user
  */
-const updateUser = async function (id, mail, password, pseudo) {
-  await db
-    .from("Users")
-    .where({ id: id })
-    .update({ mail: mail, password: password, pseudo: pseudo });
-};
+const updateUser = async function (data) {
+  const { lastName, firstName, birthDate, CA, postalAdress, phone, taxes, email, password } = data;
+  const sql = "UPDATE utilisateurs SET lastName = ?, firstName = ?, birthDate = ?, CA = ?, postalAdress = ?, phone = ?, taxes = ?, email = ?, password = ? WHERE id = ?";
+  const values = [lastName, firstName, birthDate, CA, postalAdress, phone, taxes, email, password, data.id];
 
-/**
- * update Guest in database
- * @params {int} id - id of guest
- * @params {string} score - score of guest
- * @params {string} note - note of guest
- * @params {string} hasShare - guest is share with other user
- */
-const updateGuest = async function (id, score, note, hasShare) {
-  const guest = await findGuestById(id);
-  if (guest[0].hasMeet == "false") {
-    await db.from("Guests").where({ id: id }).update({
-      score: score,
-      note: note,
-      meetDate: new Date().toLocaleDateString(),
-      hasMeet: "true",
-      hasShare: hasShare,
+  try {
+    const result = await new Promise((resolve, reject) => {
+      connection.query(sql, values, function (error, result, fields) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
     });
-  } else {
-    console.log("debug DAO", score, note, hasShare);
-    await db
-      .from("Guests")
-      .where({ id: id })
-      .update({ score: score, note: note, hasShare: hasShare });
+
+    if (result.affectedRows > 0) {
+      // La mise à jour a réussi, vous pouvez retourner les données mises à jour si nécessaire
+      return { success: true };
+    } else {
+      return null; // Échec de la mise à jour
+    }
+  } catch (err) {
+    console.error("error: ", err);
+    throw err;
   }
 };
 
-/**
- * delete Guest in the database
- * @params {int} id - id of User
- */
-const deleteGuest = async function (id) {
-  await db.delete().from("Guests").where({ id: id });
-};
-
-/**
- * return all Guests who are meet with the user from the database
- * @params {int} id - id of User
- */
-const getOldGuest = async function (id) {
-  return await db
-    .select("*")
-    .from("Guests")
-    .where({ userId: id, hasMeet: "true" });
-};
-
-/**
- * return all Guests who are never meet yet from the database
- * @params {int} id - id of User
- */
-const getNewGuest = async function (id) {
-  return await db
-    .select("*")
-    .from("Guests")
-    .where({ userId: id, hasMeet: "false" });
-};
 
 module.exports = {
   findUserByMail,
   findUserByMailAndPassword,
   findUserById,
-  findGuestById,
-  findGuestByIdentity,
   addUser,
-  addGuest,
   updateUser,
-  updateGuest,
-  deleteGuest,
-  getOldGuest,
-  getNewGuest,
 };

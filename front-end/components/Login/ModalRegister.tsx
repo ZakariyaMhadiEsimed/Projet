@@ -90,6 +90,19 @@ const ModalRegister = (props: ModalRegisterProps) => {
 		}
 	}
 
+	const fetchUpdateUser = async (data: any): Promise<any> => {
+		const token = Store.get('user')
+		const users = await API_TOKEN(token.authenticationToken)
+			.put(R.PUT_UPDATE_USER(), data)
+			.then((res) => res.data)
+			.catch((e) => {
+				return { error: true, message: JSON.stringify(e) }
+			})
+		if (!users.error) {
+			return users
+		}
+	}
+
 	const fetchGetUser = async (): Promise<any> => {
 		const token = Store.get('user')
 		const users = await API_TOKEN(token.authenticationToken)
@@ -105,7 +118,7 @@ const ModalRegister = (props: ModalRegisterProps) => {
 
 	const onSubmit = async (data: any): Promise<void> => {
 		if (props.isEdit) {
-			console.log('debug edit')
+			await fetchUpdateUser(data)
 		} else {
 			await fetchCreateUser(data).then((r) => {
 				if (!isUndefined(r)) {
@@ -113,20 +126,21 @@ const ModalRegister = (props: ModalRegisterProps) => {
 				}
 			})
 		}
+		props.closeModalHandler()
 	}
 
 	useEffect(() => {
 		if (props.isEdit && props.showModal) {
 			fetchGetUser().then((r) => {
-				setValue('firstName', r.firstName)
-				setValue('lastName', r.lastName)
-				setValue('birthDate', r.birthDate)
-				setValue('postalAdress', r.postalAdress)
-				setValue('phone', r.phone)
-				setValue('CA', r.CA)
-				setValue('taxes', r.taxes)
-				setValue('email', r.email)
-				setValue('password', r.password)
+				setValue('firstName', r?.firstName)
+				setValue('lastName', r?.lastName)
+				setValue('birthDate', r?.birthDate.toString())
+				setValue('postalAdress', r?.postalAdress)
+				setValue('phone', r?.phone)
+				setValue('CA', r?.CA)
+				setValue('taxes', r?.taxes)
+				setValue('email', r?.email)
+				setValue('password', r?.password)
 			})
 		}
 		getValues('phone')

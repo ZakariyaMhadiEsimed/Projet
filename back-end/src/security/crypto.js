@@ -7,3 +7,9 @@ exports.generateHashedPassword = (password) => {
 exports.passwordsAreEqual = (rawPassword, hashedPassword) => {
   return bcrypt.compareSync(rawPassword, hashedPassword) 
 }
+
+
+
+
+
+

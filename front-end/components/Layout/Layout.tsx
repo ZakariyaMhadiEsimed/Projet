@@ -52,7 +52,7 @@ const HeaderWrapper = styled.div`
 `
 const LayoutPageWrapper = styled.div`
 	background-color: ${theme.colors.layout};
-	padding: 30px;
+	display: flex;
 `
 const PageTitle = styled.h2`
 	font-size: 20px;

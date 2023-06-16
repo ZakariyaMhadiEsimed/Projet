@@ -10,7 +10,6 @@ import { uriList } from '../constants/RouteList'
 import { useRouter } from 'next/router'
 
 const Home: NextPage = () => {
-
 	const { user } = useSelector(
 		(state: RootState) => ({
 			user: state.user,
@@ -25,7 +24,7 @@ const Home: NextPage = () => {
 	// Note that here, we are authenticated
 	useEffect(() => {
 		if (!isEqual(user.identity, {}) && user.isConnected) {
-			router.replace(uriList.users)
+			router.replace(uriList.dashboard)
 		} else {
 			router.replace(uriList.login)
 		}

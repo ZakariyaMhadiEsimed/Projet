@@ -39,3 +39,19 @@ export function POST_CREATE_USER(): string {
 export function GET_USER(): string {
 	return '/users/infos'
 }
+
+export function PUT_UPDATE_USER(): string {
+	return '/users/update'
+}
+
+export function POST_ALL_CUSTOMERS(query: any): string {
+	return `/customers/all?page=${query.page}&size=${query.size}`
+}
+
+export function POST_ALL_PROJECTS(query: any): string {
+	return `/projects/all?page=${query.page}&size=${query.size}`
+}
+
+export function POST_ALL_BILLS(query: any): string {
+	return `/bills/all?page=${query.page}&size=${query.size}`
+}

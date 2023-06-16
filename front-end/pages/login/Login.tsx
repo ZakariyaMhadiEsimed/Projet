@@ -169,7 +169,7 @@ const Login: FC<any> = ({ mockLogin }) => {
 	// Redirect if connected
 	useEffect(() => {
 		if (user.isConnected) {
-			router.push(uriList.users)
+			router.push(uriList.dashboard)
 		}
 	}, [user?.isConnected, router])
 

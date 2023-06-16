@@ -1,6 +1,7 @@
 const { generateHashedPassword } = require('../security/crypto')
 const DAOUsers = require("./dao/DAOUsers");
 const {isEmpty} = require("lodash/lang");
+const DAOCustomers = require("./dao/DAOCustomers");
 
 /**
  * return one User from the database
@@ -27,13 +28,13 @@ exports.getAllCustomers = async function (id, page, size, searchValue) {
     }
 }
 
-exports.getUserByMailAndPassword = async function (mail, password) {
-  const DAOUsers = require('./dao/DAOUsers')
-  const user = await DAOUsers.findUserByMailAndPassword(mail, password)
-  if (user){
-    return {status: 200, message:user}
+exports.createCustomer= async function (id, data) {
+  const DAOCustomers = require('./dao/DAOCustomers')
+  const customer = await DAOCustomers.createCustomer(id, data)
+  if (customer){
+    return {status: 200, message:'Done !'}
   } else {
-    return {status: 404, message:'User not exist'}
+    return {status: 404, message:'Customer not added'}
   }
 }
 
@@ -41,12 +42,13 @@ exports.getUserByMailAndPassword = async function (mail, password) {
  * return one User from the database
  * @params {int} id - id of User
  */
-exports.getUserById = async function (id) {
-  const DAOUsers = require('./dao/DAOUsers')
-
-  const user = await DAOUsers.findUserById(id)
-  if (user){
-      return {status: 200, message:user}
+exports.getCustomerById = async function (id, customerId) {
+  console.log('debug id and customer : ', id, customerId)
+  const DAOCustomers = require('./dao/DAOCustomers')
+  const customer = await DAOCustomers.getCustomerById(id, customerId)
+  console.log('debug : ', customer)
+  if (customer){
+      return {status: 200, message: customer}
   } else {
       return {status: 404, message:'User not exist'}
   }

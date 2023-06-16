@@ -1,5 +1,5 @@
 ////////LIBRARY/////////
-import { Dispatch, FC, MutableRefObject, SetStateAction, useEffect, useMemo, useRef, useState } from 'react'
+import React, { Dispatch, FC, MutableRefObject, SetStateAction, useEffect, useMemo, useRef, useState } from 'react'
 import { find, isEmpty, isUndefined } from 'lodash'
 import styled from 'styled-components'
 import ReactDataGrid, { SortColumn } from 'react-data-grid'
@@ -11,6 +11,8 @@ import Paging from '../Paging'
 /////////ASSETS/////////
 import ResetSearchIcon from '../../assets/icones/global/close-red.svg'
 import SearchIcon from '../../assets/icones/global/zoom-in.svg'
+import PageActions from '../PageActions'
+import { Button, ButtonWrapper } from '../../theme/GlobalCss'
 
 /////////STYLED/////////
 const TableWrapper = styled.div`
@@ -25,8 +27,11 @@ const TableHeaderWrapper = styled.div`
 	align-items: center;
 `
 const TableTitleWrapper = styled.span`
-	font-size: ${theme.text.fontSize.fl};
-	color: ${theme.colors.secondary_400};
+	font-size: 20px;
+	color: ${theme.colors.primary_200};
+	font-weight: bold;
+	text-transform: uppercase;
+	margin-bottom: 10px;
 `
 const CustomReactDataGrid = styled(ReactDataGrid)`
 	background-color: ${theme.colors.white};
@@ -34,6 +39,9 @@ const CustomReactDataGrid = styled(ReactDataGrid)`
 	border: 1px solid ${theme.colors.light};
 	& .rdg-header-row {
 		background-color: ${theme.colors.light};
+	}
+	& .rdg-header-sort-cell > span:nth-child(2) {
+		width: 12px;
 	}
 	& .rdg-row-odd {
 		background-color: ${theme.colors.table.odd};
@@ -139,6 +147,7 @@ type TableHandlerProps = {
 	pagingConfig?: any
 	paging: any
 	sortSetter: Dispatch<SetStateAction<string | undefined>>
+	pageActionsConfig?: any
 }
 type CustomReactDataGridProps = {
 	hasActions: boolean
@@ -146,7 +155,15 @@ type CustomReactDataGridProps = {
 }
 /////////TYPES//////////
 
-const TableHandler: FC<TableHandlerProps> = ({ createRows, cols, config, pagingConfig, paging, sortSetter }): React.ReactElement => {
+const TableHandler: FC<TableHandlerProps> = ({
+	createRows,
+	cols,
+	config,
+	pagingConfig,
+	paging,
+	sortSetter,
+	pageActionsConfig,
+}): React.ReactElement => {
 	const [rows, setRows] = useState(createRows)
 	const [sortColumns, setSortColumns] = useState<SortColumn[]>(!isUndefined(config?.defaultSort) ? [config.defaultSort] : [])
 	const searchRef = useRef()
@@ -212,10 +229,27 @@ const TableHandler: FC<TableHandlerProps> = ({ createRows, cols, config, pagingC
 	}, [sortColumns])
 
 	///////////////////////////////// RENDER ///////////////////////////////////////
+	console.log('debug : ', config)
+
 	return (
 		<>
 			<TableWrapper>
 				<TableHeaderWrapper>
+					{config?.actionsConfig && (
+						<div style={{ marginBottom: '10px' }}>
+							<Button
+								width={100}
+								height={35}
+								backgroundColor={theme.colors.primary}
+								color={theme.colors.white}
+								hoverBackgroundColor={theme.colors.primary_200}
+								percentUnit={true}
+								fontSize={theme.text.fontSize.fm}
+								value={config?.actionsConfig?.label}
+								onClick={config?.actionsConfig?.onClick}
+							/>
+						</div>
+					)}
 					{config?.tableTitle && <TableTitleWrapper>{config?.tableTitle}</TableTitleWrapper>}
 					{config?.searchBarComponent && (
 						<FreeSearchWrapper>

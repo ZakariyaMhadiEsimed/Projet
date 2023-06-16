@@ -116,63 +116,10 @@ const PageActions: FC<PageActionsProps> = ({ pageActionsConfig, filtersState }):
 
 	///////////////////////////////// RENDER ///////////////////////////////////////
 
+	console.log('debugito')
 	return (
 		<PageActionsWrapper>
 			<PageActionsBloc>
-				{!isUndefined(pageActionsConfig) && !isUndefined(pageActionsConfig.prevLinkButton) && pageActionsConfig.prevLinkButton}
-				{!isUndefined(pageActionsConfig?.filtersConfig) && !isUndefined(filtersState) ? (
-					<FiltersWrapper>
-						{!isUndefined(filtersState) &&
-							!isUndefined(pageActionsConfig?.filtersConfig?.useCheckAll) &&
-							map(filtersState.filtersSelection, (elem, k: string) => {
-								return (
-									<DropdownCheckbox
-										title={pageActionsConfig?.filtersConfig?.filtersTranslationKeys[k]?.title}
-										data={elem.filterElements || []}
-										paperTopPosition={40}
-										dropColor={'blueColor'}
-										selectActionsHandler={pageActionsConfig?.filtersConfig?.useCheckAll?.handleCheckElements}
-										submitOnClose={pageActionsConfig?.filtersConfig?.handleSubmit}
-										target={k}
-										toTranslate={
-											!isUndefined(pageActionsConfig?.filtersConfig?.filtersTranslationKeys[k]?.toTranslate) &&
-											pageActionsConfig?.filtersConfig?.filtersTranslationKeys[k]?.toTranslate
-										}
-										prefixTranslation={
-											!isUndefined(pageActionsConfig?.filtersConfig?.filtersTranslationKeys[k]?.prefixTranslation) &&
-											pageActionsConfig?.filtersConfig?.filtersTranslationKeys[k]?.prefixTranslation
-										}
-									/>
-								)
-							})}
-					</FiltersWrapper>
-				) : null}
-			</PageActionsBloc>
-			<PageActionsBloc>
-				{!isUndefined(pageActionsConfig?.filtersConfig?.dateFilterComponent) && (
-					<FiltersDateWrapper>
-						<span>
-							{!isUndefined(pageActionsConfig?.filtersConfig?.dateFilterComponent?.textSpan)
-								? `${t(pageActionsConfig?.filtersConfig?.dateFilterComponent?.textSpan)} :`
-								: `${t('common:filters_dateFilter_datePicker_label')} :`}
-						</span>
-						<FiltersDatePickerPict
-							onClick={() => pageActionsConfig?.filtersConfig.dateFilterComponent.dateFilterOpenDateModalHandler()}
-						/>
-						<FiltersDateResultWrapper>
-							<span>
-								{`${t('common:filters_dateFilter_datePicker_from')} ${moment(
-									pageActionsConfig?.filtersConfig.dateFilterComponent.dateFilterStateDate.date.startDate
-								).format('DD/MM/YYYY HH:mm')}`}
-							</span>
-							<span>
-								{`${t('common:filters_dateFilter_datePicker_to')} ${moment(
-									pageActionsConfig?.filtersConfig.dateFilterComponent.dateFilterStateDate.date.endDate
-								).format('DD/MM/YYYY HH:mm')}`}
-							</span>
-						</FiltersDateResultWrapper>
-					</FiltersDateWrapper>
-				)}
 				{!isUndefined(pageActionsConfig) && !isUndefined(pageActionsConfig.pageActions) ? (
 					<ActionsWrapper>{map(pageActionsConfig.pageActions, (func, k) => func(k))}</ActionsWrapper>
 				) : null}

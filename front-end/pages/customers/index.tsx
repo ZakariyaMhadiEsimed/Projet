@@ -3,7 +3,7 @@
 import { cloneDeep, isUndefined } from 'lodash'
 import { NextPage } from 'next'
 import cookies from 'next-cookies'
-import { MutableRefObject, useEffect, useState } from 'react'
+import React, { MutableRefObject, useEffect, useState } from 'react'
 import { Column } from 'react-data-grid'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
@@ -21,6 +21,13 @@ import { HeaderFilters } from '../../interfaces/components/PageActions/PageActio
 import { tableConfigProps } from '../../interfaces/components/TableHandler/TableHandler.interfaces'
 import { errorManagerActionCreators, globalLoadingActionCreators } from '../../store/actions'
 import { useForm } from 'react-hook-form'
+import ModalRegister from '../../components/Login/ModalRegister'
+import ModalAdd from '../../components/Customers/ModalAdd'
+import { useRouter } from 'next/router'
+import { uriList } from '../../constants/RouteList'
+import { log } from 'util'
+import ActionsTable from '../../components/ActionsTable'
+import ModalDelete from '../../components/Customers/ModalDelete'
 
 ///////INTERFACES///////
 interface CustomColumn extends Column<userItem> {
@@ -51,6 +58,8 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 	const { t } = useTranslation()
 	const [prevFilters, setPrevFilters] = useState<HeaderFilters | undefined>() // Previous filters (for 'updated' var check on UseCheckAll)
 	const [filters, setFilters, handleCheckElements] = UseCheckAll(prevFilters, undefined) // Our current filters
+	const router = useRouter()
+	const [customerId, setCustomerId] = useState<number | null>()
 	// Search bar
 	const [searchValue, setSearchValue] = useState<string>()
 	// Table
@@ -60,6 +69,8 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 	const [currentPaging, setCurrentPaging] = useState<any>({
 		fnSendTo: (paging: queryParamPagingProps) => handlePagingCustomersManager(paging),
 	})
+	const [showModalAdd, setShowModalAdd] = useState<boolean>(false)
+	const [showModalDelete, setShowModalDelete] = useState<boolean>(false)
 	// REDUX actions
 	const actionsErrorManager = bindActionCreators(errorManagerActionCreators, useDispatch())
 	const actionsGlobalLoading = bindActionCreators(globalLoadingActionCreators, useDispatch())
@@ -79,25 +90,30 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 
 	///////////////////////////////// CONFIG ///////////////////////////////////////
 
-	/*const rowActionsConfig = {
+	const rowActionsConfig = {
 		actionsList: [
 			{
-				name: t('Customers:page_Customers_table_column_actions_editUser'),
-				clickAction: (row: userItem) => router.push(`${uriList.Customers}${uriList.CustomersEdit}/${row.userId}`),
+				name: 'Modifier',
+				clickAction: (row: userItem) => {
+					setCustomerId(row.id)
+					setShowModalAdd(true)
+				},
 				isVisible: (row: userItem) => true,
-				disabled: (row: userItem) => !row.enabled,
+				disabled: (row: userItem) => false,
 			},
 			{
-				name: t('Customers:page_Customers_table_column_actions_deleteUser'),
-				clickAction: (row: userItem) => handleModalDectivate(row),
+				name: 'Supprimer',
+				clickAction: (row: userItem) => {
+					setCustomerId(row.id)
+					setShowModalDelete(true)
+				},
 				isVisible: (row: userItem) => true,
-				disabled: (row: userItem) => !row.enabled,
-				redFlag: true,
+				disabled: (row: userItem) => false,
 				testIdKey: 'delete-user',
 			},
 		],
 		requiredRight: null,
-	}*/
+	}
 
 	const columns: CustomColumn[] = [
 		{
@@ -125,23 +141,28 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 			sortColumnName: 'phone',
 		},
 		{
-			key: 'postalAddress',
+			key: 'postalAdress',
 			name: 'Adresse postale',
 			sortable: true,
-			sortColumnName: 'postalAddress',
+			sortColumnName: 'postalAdress',
 		},
 		{
 			key: 'isCompany',
 			name: 'Type du client',
-			sortable: false,
-			formatter: (props) => <div>{props.row.isCompany ? 'true' : 'false'}</div>,
+			sortColumnName: 'isCompany',
+			sortable: true,
+			formatter: (props) => <div>{props.row.isCompany ? 'Professionnel' : 'Particulier'}</div>,
 		},
-		/*{
+		{
 			key: 'Actions',
 			name: 'Actions',
 			frozen: true,
-			formatter: (props) => <ActionsTable row={props.row} rowActionsConfig={rowActionsConfig} />,
-		},*/
+			formatter: (props) => (
+				<div onClick={() => console.log('debug row : ', props.row)}>
+					<ActionsTable row={props.row} rowActionsConfig={rowActionsConfig} />
+				</div>
+			),
+		},
 	]
 
 	///////////////////////////////// HANDLE ///////////////////////////////////////
@@ -154,11 +175,11 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 			case 'firstName':
 			case 'email':
 			case 'phone':
-			case 'postalAddress':
+			case 'postalAdress':
 				return (a, b) => {
 					return a[sortColumn].localeCompare(b[sortColumn])
 				}
-			case 'enabled':
+			case 'isCompany':
 				return (a, b) => {
 					return a[sortColumn] === b[sortColumn] ? 0 : a[sortColumn] ? 1 : -1
 				}
@@ -243,20 +264,16 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 		handleSubmit('', refInput.current.value)
 	}
 
-	const pageActionsConfig = {
-		filtersConfig: {
-			useCheckAll: {
-				setPrevFilters: setPrevFilters,
-				setFilters: setFilters,
-				handleCheckElements: handleCheckElements,
-			},
-			filtersTranslationKeys: {},
-			handleSubmit: handleSubmit,
-		},
-		pageActions: [() => <PageActionsButtonLink href={''}>{t('Customers:page_Customers_button_CustomersCreate')}</PageActionsButtonLink>],
+	const handleOpenModal = () => {
+		console.log('debug click')
+		setShowModalAdd(true)
 	}
 
 	/////////////////////////////// USE EFFECT /////////////////////////////////////
+
+	useEffect(() => {
+		if (!showModalAdd || !showModalDelete) setCustomerId(null)
+	}, [showModalAdd, showModalDelete])
 
 	useEffect(() => {
 		if (props.error) {
@@ -277,6 +294,10 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 					setSearchValue: setSearchValue,
 				},
 				tableTitle: t('common:menu_customers').toString(),
+				actionsConfig: {
+					label: 'Ajouter un client',
+					onClick: handleOpenModal,
+				},
 			})
 			setCurrentPaging({
 				totalElements: props.headerContent.contentPaginated.totalElements,
@@ -308,7 +329,8 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 
 	return (
 		<>
-			{!isUndefined(filters) && <PageActions pageActionsConfig={pageActionsConfig} filtersState={filters} />}
+			<ModalDelete showModal={showModalDelete} closeModalHandler={() => setShowModalDelete(false)} id={customerId} />
+			<ModalAdd showModal={showModalAdd} closeModalHandler={() => setShowModalAdd(false)} id={customerId} />
 			{props && !isUndefined(tableConfig) && currentPaging ? (
 				<TableHandler
 					createRows={items}

@@ -55,3 +55,11 @@ export function POST_ALL_PROJECTS(query: any): string {
 export function POST_ALL_BILLS(query: any): string {
 	return `/bills/all?page=${query.page}&size=${query.size}`
 }
+
+export function POST_CREATE_CUSTOMER(): string {
+	return `/customers/create`
+}
+
+export function GET_CUSTOMER(id: number): string {
+	return `/customers/${id}`
+}

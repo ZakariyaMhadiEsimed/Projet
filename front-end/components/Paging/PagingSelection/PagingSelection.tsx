@@ -37,12 +37,13 @@ const PagingWrapper = styled.div`
 	grid-column-gap: 10px;
 	justify-content: center;
 	align-items: center;
+	margin-left: 220px;
 `
 const EmptyWrapper = styled.div`
 	width: 32px;
 	height: 32px;
 `
-const ArrowWrapper = styled.div`
+const ArrowWrapper = styled.div<{ isDisable?: boolean }>`
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -54,7 +55,8 @@ const ArrowWrapper = styled.div`
 	border: 1px solid ${theme.colors.border.grey};
 	border-radius: 8px;
 	transition: all 0.1s ease;
-
+	opacity: ${(props) => props.isDisable && 0.2};
+	cursor: ${(props) => props.isDisable && 'not-allowed'};
 	&:hover {
 		border: none;
 		background-color: ${theme.colors.primary};
@@ -140,7 +142,9 @@ const PagingSelection: FC<PagingSelectionProps> = ({ totalPage, register, setVal
 						<LeftArrow className="paging-left-arrow" />
 					</ArrowWrapper>
 				) : (
-					<EmptyWrapper />
+					<ArrowWrapper isDisable={true}>
+						<LeftArrow className="paging-left-arrow" />
+					</ArrowWrapper>
 				)}
 				<PagingList
 					options={options}
@@ -155,7 +159,9 @@ const PagingSelection: FC<PagingSelectionProps> = ({ totalPage, register, setVal
 						<RightArrow className="paging-right-arrow" />
 					</ArrowWrapper>
 				) : (
-					<EmptyWrapper />
+					<ArrowWrapper isDisable={true}>
+						<RightArrow className="paging-right-arrow" />
+					</ArrowWrapper>
 				)}
 			</PagingWrapper>
 			<SelectWrapper>

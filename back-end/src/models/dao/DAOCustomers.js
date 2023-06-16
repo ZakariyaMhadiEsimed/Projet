@@ -74,6 +74,63 @@ const getCountAllCustomers = async function (id, searchValue) {
   }
 };
 
+const createCustomer = async function (id, data) {
+  console.log('debug data : ', data)
+  const { lastName, firstName, postalAdress, phone, email, typeId } = data;
+  const sql = "INSERT INTO clients (userId, isCompany, lastName, firstName, postalAdress, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  const values = [id, typeId, lastName, firstName, postalAdress, phone, email];
+
+  try {
+    const result = await new Promise((resolve, reject) => {
+      connection.query(sql, values, function (error, result, fields) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+
+    if (result.affectedRows > 0) {
+      // L'insertion a réussi, vous pouvez retourner les données insérées si nécessaire
+      return true ;
+    } else {
+      return false; // Échec de l'insertion
+    }
+  } catch (err) {
+    console.error("error: ", err);
+    throw err;
+  }
+};
+
+/**
+ * return one User from the database
+ * @params {int} id - id of User
+ */
+const getCustomerById = async function (id, customerId) {
+  const sql =
+      "SELECT * FROM clients WHERE clients.userId='" + id + "' AND clients.id='" + customerId + "';";
+  try {
+    const result = await new Promise((resolve, reject) => {
+      connection.query(sql, function (error, result, fields) {
+        if (error) {
+          reject(error);
+        } else {
+          let queryResult;
+          Object.keys(result).forEach(function (key) {
+            queryResult = result[key];
+          });
+          resolve(queryResult);
+        }
+      });
+    });
+    return { ...result };
+  } catch (err) {
+    console.error("error : ", err);
+    throw err;
+  }
+};
+
 const findUserByMailAndPassword = async function (mail, password) {
   const sql =
       "SELECT * FROM utilisateurs WHERE utilisateurs.email='" + mail + "';";
@@ -204,6 +261,8 @@ const updateUser = async function (data) {
 module.exports = {
   getAllCustomers,
   getCountAllCustomers,
+  createCustomer,
+  getCustomerById,
   findUserByMailAndPassword,
   findUserById,
   addUser,

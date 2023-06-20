@@ -13,10 +13,10 @@ interface ModalDeleteProps {
 	id?: number
 }
 const ModalDelete = (props: ModalDeleteProps) => {
-	const fetchCreateCustomer = async (data: any): Promise<any> => {
+	const fetchDeleteCustomer = async (): Promise<any> => {
 		const token = Store.get('user')
 		const users = await API_TOKEN(token.authenticationToken)
-			.post(R.POST_CREATE_CUSTOMER(), data)
+			.delete(R.DELETE_CUSTOMER(props.id))
 			.then((res) => res.data)
 			.catch((e) => {
 				return { error: true, message: JSON.stringify(e) }
@@ -25,15 +25,16 @@ const ModalDelete = (props: ModalDeleteProps) => {
 			return users
 		}
 	}
-	const handleDelete = () => {
-		console.log('debug : ', props)
+	const handleDelete = async () => {
+		await fetchDeleteCustomer()
+		props.closeModalHandler()
 	}
 
 	return (
 		<Modals showModal={props.showModal} closeModalHandler={props.closeModalHandler}>
 			<ModalTitle>{'Suppression'}</ModalTitle>
 			<ModalsBodyContainer>
-				Etes vous certain de vouloir ce client ?
+				<div style={{ textAlign: 'center', marginBottom: '15px' }}>Etes vous certain de vouloir ce client ?</div>
 				<Button
 					type="submit"
 					width={100}

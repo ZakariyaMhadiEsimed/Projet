@@ -158,7 +158,7 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 			name: 'Actions',
 			frozen: true,
 			formatter: (props) => (
-				<div onClick={() => console.log('debug row : ', props.row)}>
+				<div>
 					<ActionsTable row={props.row} rowActionsConfig={rowActionsConfig} />
 				</div>
 			),
@@ -265,14 +265,14 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 	}
 
 	const handleOpenModal = () => {
-		console.log('debug click')
+		setCustomerId(null)
 		setShowModalAdd(true)
 	}
 
 	/////////////////////////////// USE EFFECT /////////////////////////////////////
 
 	useEffect(() => {
-		if (!showModalAdd || !showModalDelete) setCustomerId(null)
+		if (!showModalAdd && !showModalDelete) handleSubmit('')
 	}, [showModalAdd, showModalDelete])
 
 	useEffect(() => {

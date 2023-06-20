@@ -229,7 +229,6 @@ const TableHandler: FC<TableHandlerProps> = ({
 	}, [sortColumns])
 
 	///////////////////////////////// RENDER ///////////////////////////////////////
-	console.log('debug : ', config)
 
 	return (
 		<>

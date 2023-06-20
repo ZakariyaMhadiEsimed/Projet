@@ -70,23 +70,14 @@ router.get('/:id', (req, res) => {
 
 })
 
-router.put('/update',
+router.put('/update/:id',
     body("lastName").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
     body("firstName").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
-    body("birthDate").notEmpty().withMessage('Champs requis !').custom((value) => {
-        if (!moment(value, 'DD-MM-YYYY', true).isValid()) {
-            throw new Error('Format invalide !');
-        }
-        return true;
-    }),
-    body("CA").notEmpty().withMessage('Champs requis !').isNumeric().withMessage('Format invalide'),
     body("postalAdress").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
     body("phone").notEmpty().withMessage('Champs requis !').isNumeric().withMessage('Format invalide')
         .isLength({max: 10, min: 10}).withMessage('Format invalide'),
-    body("taxes").notEmpty().withMessage('Champs requis !').isNumeric().withMessage('Format invalide'),
     body("email").notEmpty().withMessage('Champs requis !').isEmail().withMessage('Format invalide !'),
-    body("password").notEmpty().withMessage('Champs requis !')
-        .isLength({min: 8}).withMessage('Longueur min de 8 caractères'),
+    body("isCompany").notEmpty().withMessage('Champs requis !'),
   (req, res) => {
     validateBody(req)
     const token = req.headers.authorization.split(' ')
@@ -94,16 +85,17 @@ router.put('/update',
     if (!errors.isEmpty()) {
         return res.status(400).send(JSON.stringify(errors.array()));
     }
-    userRepository.updateUser(extractUserId(token[1], process.env.JWT_SECRET).userId, req.body).then(r => {
+    customerRepository.updateCustomer(extractUserId(token[1], process.env.JWT_SECRET).userId, req.params.id, req.body).then(r => {
         res.status(r.status).send(r.message);
     });
   }
 )
 
-/*router.delete('/guest/:id', (req, res) => {
-  userRepository.deleteGuest(req.params.id).then(r => {
+router.delete('/:id', (req, res) => {
+    const token = req.headers.authorization.split(' ')
+    customerRepository.deleteCustomer(extractUserId(token[1], process.env.JWT_SECRET).userId,req.params.id).then(r => {
     res.status(r.status).send(r.message)
   })
-}) */
+})
 
 exports.initializeRoutes = () => router 

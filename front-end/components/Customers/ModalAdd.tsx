@@ -13,20 +13,15 @@ import {
 	StyledInput,
 } from '../../theme/GlobalCss'
 import { Controller, useForm } from 'react-hook-form'
-import { isUndefined } from 'lodash'
+import { isNull, isUndefined } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useTranslation } from 'react-i18next'
 import theme from '../../theme/theme'
 import StyledInputPhoneNumber from '../Form/StyledInputPhoneNumber'
-import API_TOKEN, { API } from '../../config/AxiosConfig'
+import API_TOKEN from '../../config/AxiosConfig'
 import Store from '../../helpers/Store'
 import * as R from '../../constants/Endpoint'
-import { bindActionCreators } from 'redux'
-import { loginActionCreators } from '../../store/actions'
-import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../../interfaces/store/store.interfaces'
 import styled from 'styled-components'
 import FormRadio from '../Form/FormRadio'
 
@@ -44,13 +39,6 @@ interface ModalAddProps {
 	id?: number
 }
 const ModalAdd = (props: ModalAddProps) => {
-	const { user } = useSelector(
-		(state: RootState) => ({
-			user: state.user,
-		}),
-		shallowEqual
-	)
-	const defaultValues = { email: '', password: '', firstName: '', lastName: '', birthDate: '', postalAdress: '', phone: '', CA: '', taxes: '' }
 	const registerFormSchema = Yup.object().shape({
 		typeId: Yup.string().required('Champ requis !'),
 		firstName: Yup.string().required('Champ requis !').max(150, 'Nombre de caractères trop élevé !'),
@@ -66,10 +54,8 @@ const ModalAdd = (props: ModalAddProps) => {
 		formState: { errors },
 		setValue,
 		getValues,
-		watch,
 	} = useForm({
 		resolver: yupResolver(registerFormSchema),
-		defaultValues,
 	})
 
 	const fetchCreateCustomer = async (data: any): Promise<any> => {
@@ -87,14 +73,16 @@ const ModalAdd = (props: ModalAddProps) => {
 
 	const fetchUpdateCustomer = async (data: any): Promise<any> => {
 		const token = Store.get('user')
-		const users = await API_TOKEN(token.authenticationToken)
-			.put(R.PUT_UPDATE_USER(), data)
-			.then((res) => res.data)
-			.catch((e) => {
-				return { error: true, message: JSON.stringify(e) }
-			})
-		if (!users.error) {
-			return users
+		if (!isNull(props.id)) {
+			const customer = await API_TOKEN(token.authenticationToken)
+				.put(R.PUT_UPDATE_CUSTOMER(props.id), data)
+				.then((res) => res.data)
+				.catch((e) => {
+					return { error: true, message: JSON.stringify(e) }
+				})
+			if (!customer.error) {
+				return customer
+			}
 		}
 	}
 
@@ -114,8 +102,10 @@ const ModalAdd = (props: ModalAddProps) => {
 	}
 
 	const onSubmit = async (data: any): Promise<void> => {
-		console.log('debug data : ', data)
-		if (props.id) {
+		if (!isNull(props.id)) {
+			data.isCompany = data.typeId
+			data.id = props.id
+			delete data.typeId
 			await fetchUpdateCustomer(data)
 		} else {
 			await fetchCreateCustomer(data)
@@ -134,13 +124,13 @@ const ModalAdd = (props: ModalAddProps) => {
 				setValue('email', r?.email)
 				setNameToDisplay(r?.firstName + ' ' + r?.lastName)
 			})
-		}
+		} else setNameToDisplay('Nouveau client')
 		getValues('phone')
 	}, [props.showModal])
 
 	return (
 		<Modals showModal={props.showModal} closeModalHandler={props.closeModalHandler}>
-			<ModalTitle>{props.id ? `Client : ${nameToDisplay}` : 'Nouveau client'}</ModalTitle>
+			<ModalTitle>{nameToDisplay}</ModalTitle>
 			<ModalsBodyContainer>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<PageFormFieldWrapper>

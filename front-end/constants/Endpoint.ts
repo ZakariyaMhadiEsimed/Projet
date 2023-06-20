@@ -63,3 +63,10 @@ export function POST_CREATE_CUSTOMER(): string {
 export function GET_CUSTOMER(id: number): string {
 	return `/customers/${id}`
 }
+export function PUT_UPDATE_CUSTOMER(id: number): string {
+	return `/customers/update/${id}`
+}
+
+export function DELETE_CUSTOMER(id: number): string {
+	return `/customers/${id}`
+}

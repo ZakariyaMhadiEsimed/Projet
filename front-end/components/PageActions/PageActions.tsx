@@ -116,7 +116,6 @@ const PageActions: FC<PageActionsProps> = ({ pageActionsConfig, filtersState }):
 
 	///////////////////////////////// RENDER ///////////////////////////////////////
 
-	console.log('debugito')
 	return (
 		<PageActionsWrapper>
 			<PageActionsBloc>

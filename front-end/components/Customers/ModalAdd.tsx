@@ -36,12 +36,15 @@ export const RadioListContainer = styled.div`
 interface ModalAddProps {
 	showModal: boolean
 	closeModalHandler: () => void
-	id?: number
+	id?: number | null
 }
 const ModalAdd = (props: ModalAddProps) => {
 	const registerFormSchema = Yup.object().shape({
-		typeId: Yup.string().required('Champ requis !'),
-		firstName: Yup.string().required('Champ requis !').max(150, 'Nombre de caractères trop élevé !'),
+		typeId: Yup.number().required('Champ requis !'),
+		firstName: Yup.string().when('typeId', {
+			is: '0',
+			then: Yup.string().required('Champ requis !').max(150, 'Nombre de caractères trop élevé !'),
+		}),
 		lastName: Yup.string().required('Champ requis !').max(150, 'Nombre de caractères trop élevé !'),
 		postalAdress: Yup.string().required('Champ requis !').max(150, 'Nombre de caractères trop élevé !'),
 		phone: Yup.string().required('Champ requis !').min(10, 'Format invalide !'),
@@ -54,6 +57,7 @@ const ModalAdd = (props: ModalAddProps) => {
 		formState: { errors },
 		setValue,
 		getValues,
+		watch,
 	} = useForm({
 		resolver: yupResolver(registerFormSchema),
 	})
@@ -136,7 +140,7 @@ const ModalAdd = (props: ModalAddProps) => {
 					<PageFormFieldWrapper>
 						<InputLabelWrapper>
 							<InputLabel>Choisissez le type du client : </InputLabel>
-							{errors.firstName && <InputErrorMessage>{errors.firstName.message?.toString()}</InputErrorMessage>}
+							{errors.typeId && <InputErrorMessage>{errors.typeId.message?.toString()}</InputErrorMessage>}
 						</InputLabelWrapper>
 						<Controller
 							control={control}
@@ -183,7 +187,7 @@ const ModalAdd = (props: ModalAddProps) => {
 									)}
 								/>
 							</PageFormFieldWrapper>
-							{getValues('typeId') == 0 && (
+							{watch('typeId') == 0 && (
 								<PageFormFieldWrapper>
 									<InputLabelWrapper>
 										<InputLabel>Prénom</InputLabel>

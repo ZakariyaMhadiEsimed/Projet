@@ -70,3 +70,22 @@ export function PUT_UPDATE_CUSTOMER(id: number): string {
 export function DELETE_CUSTOMER(id: number): string {
 	return `/customers/${id}`
 }
+
+export function GET_CUSTOMERS_AVAILABLE(): string {
+	return '/customers'
+}
+
+export function POST_CREATE_PROJECT(): string {
+	return `/projects/create`
+}
+
+export function GET_PROJECT(id: number): string {
+	return `/projects/${id}`
+}
+export function PUT_UPDATE_PROJECT(id: number): string {
+	return `/projects/update/${id}`
+}
+
+export function DELETE_PROJECT(id: number, customerId: number): string {
+	return `/projects/${id}/${customerId}`
+}

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 ////////LIBRARY/////////
 import { cloneDeep, isUndefined } from 'lodash'
 import { NextPage } from 'next'
@@ -9,46 +8,39 @@ import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 import { bindActionCreators } from 'redux'
 ///////COMPONENTS///////
-import PageActions from '../../components/PageActions'
-import { PageActionsButtonLink } from '../../components/PageActions/PageActions'
 import { queryParamPagingProps } from '../../components/Paging/Paging'
 import TableHandler from '../../components/TableHandler'
 import API_TOKEN from '../../config/AxiosConfig'
 import * as R from '../../constants/Endpoint'
 import Store from '../../helpers/Store'
-import UseCheckAll from '../../hooks/UseCheckAll'
-import { HeaderFilters } from '../../interfaces/components/PageActions/PageActions.interfaces'
 import { tableConfigProps } from '../../interfaces/components/TableHandler/TableHandler.interfaces'
 import { errorManagerActionCreators, globalLoadingActionCreators } from '../../store/actions'
 import { useForm } from 'react-hook-form'
-import ModalRegister from '../../components/Login/ModalRegister'
 import ModalAdd from '../../components/Customers/ModalAdd'
-import { useRouter } from 'next/router'
-import { uriList } from '../../constants/RouteList'
-import { log } from 'util'
 import ActionsTable from '../../components/ActionsTable'
 import ModalDelete from '../../components/Customers/ModalDelete'
 
 ///////INTERFACES///////
-interface CustomColumn extends Column<userItem> {
+interface CustomColumn extends Column<customerItem> {
 	sortColumnName?: string
 }
 ///////INTERFACES///////
 
 /////////TYPES//////////
 type CustomersManagerProps = {
-	Customers?: any | undefined
+	customers?: any | undefined
 	error?: any | undefined
 }
-type userItem = {
+type customerItem = {
 	userId: number
-	username: string
+	id: number
 	lastName: string
 	firstName: string
-	sectorName: string
-	roleName: string
-	enabled: boolean
-	enabledLabel: string
+	birthDate: string
+	isCompany: any
+	phone: string
+	postalAdress: string
+	canDelete: boolean
 }
 /////////TYPES//////////
 
@@ -56,14 +48,9 @@ const initialPageSize = 20
 
 const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element | null => {
 	const { t } = useTranslation()
-	const [prevFilters, setPrevFilters] = useState<HeaderFilters | undefined>() // Previous filters (for 'updated' var check on UseCheckAll)
-	const [filters, setFilters, handleCheckElements] = UseCheckAll(prevFilters, undefined) // Our current filters
-	const router = useRouter()
 	const [customerId, setCustomerId] = useState<number | null>()
-	// Search bar
 	const [searchValue, setSearchValue] = useState<string>()
-	// Table
-	const [items, setItems] = useState<Array<userItem>>([])
+	const [items, setItems] = useState<Array<customerItem>>([])
 	const [tableConfig, setTableConfig] = useState<tableConfigProps | undefined>()
 	const [sortingColumn, setSortingColumn] = useState<string>()
 	const [currentPaging, setCurrentPaging] = useState<any>({
@@ -71,7 +58,6 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 	})
 	const [showModalAdd, setShowModalAdd] = useState<boolean>(false)
 	const [showModalDelete, setShowModalDelete] = useState<boolean>(false)
-	// REDUX actions
 	const actionsErrorManager = bindActionCreators(errorManagerActionCreators, useDispatch())
 	const actionsGlobalLoading = bindActionCreators(globalLoadingActionCreators, useDispatch())
 	const {
@@ -94,21 +80,21 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 		actionsList: [
 			{
 				name: 'Modifier',
-				clickAction: (row: userItem) => {
+				clickAction: (row: customerItem) => {
 					setCustomerId(row.id)
 					setShowModalAdd(true)
 				},
-				isVisible: (row: userItem) => true,
-				disabled: (row: userItem) => false,
+				isVisible: () => true,
+				disabled: () => false,
 			},
 			{
 				name: 'Supprimer',
-				clickAction: (row: userItem) => {
+				clickAction: (row: customerItem) => {
 					setCustomerId(row.id)
 					setShowModalDelete(true)
 				},
-				isVisible: (row: userItem) => true,
-				disabled: (row: userItem) => false,
+				isVisible: (row: customerItem) => row.canDelete,
+				disabled: (row: customerItem) => !row.canDelete,
 				testIdKey: 'delete-user',
 			},
 		],
@@ -168,7 +154,7 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 	///////////////////////////////// HANDLE ///////////////////////////////////////
 
 	// Used to sort our list, client side
-	type Comparator = (a: userItem, b: userItem) => number
+	type Comparator = (a: customerItem, b: customerItem) => number
 	function getComparator(sortColumn: string): Comparator {
 		switch (sortColumn) {
 			case 'lastName':
@@ -192,7 +178,7 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 		}
 	}
 
-	const fetchPostAllCustomers = async (page = 0, size = initialPageSize, sort = '', contentOnly = false, search): Promise<any> => {
+	const fetchPostAllCustomers = async (page = 0, size = initialPageSize, sort = '', contentOnly = false, search: string): Promise<any> => {
 		const token = Store.get('user')
 		const customers = await API_TOKEN(token.authenticationToken)
 			.post(R.POST_ALL_CUSTOMERS({ page: `${page}`, size: `${size}`, sort: sort }), { searchValue: search } /*, filtersCP*/)
@@ -205,26 +191,7 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 		}
 	}
 
-	/*const fetchDataUserDelete = async (userId: userItem['userId']): Promise<any> => {
-		const token = Store.get('user')
-		const userDelete = await API_TOKEN(token.authenticationToken)
-			.put(R.DEACTIVATE_USER(userId))
-			.then((res) => res.data)
-			.catch((e) => {
-				return { error: true, message: JSON.stringify(e) }
-			})
-		if (!userDelete.error) {
-			actionsToastSuccess.hydrateToast(t('Customers:page_Customers_toast_deletedUser'))
-			handleCloseModals()
-			handlePageRefresh()
-			//setUpdated(true)
-		} else {
-			actionsErrorManager.createError(userDelete.response)
-		}
-		actionsGlobalLoading.endLoading()
-	}*/
-
-	const handleSubmit = (sortingColumn = '', search: string): void => {
+	const handleSubmit = (sortingColumn = '', search = ''): void => {
 		actionsGlobalLoading.startLoading()
 		const a = async (): Promise<void> => {
 			const rst = await fetchPostAllCustomers(0, currentPaging.size, sortingColumn, false, search)
@@ -279,7 +246,7 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 		if (props.error) {
 			actionsErrorManager.createError(props.error.response)
 		} else {
-			setItems(props.headerContent.contentPaginated.content)
+			setItems(props.customers.headerContent.contentPaginated.content)
 			setTableConfig({
 				getComparator: getComparator,
 				searchBarComponent: {
@@ -300,8 +267,8 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 				},
 			})
 			setCurrentPaging({
-				totalElements: props.headerContent.contentPaginated.totalElements,
-				totalPages: props.headerContent.contentPaginated.totalPages,
+				totalElements: props.customers.headerContent.contentPaginated.totalElements,
+				totalPages: props.customers.headerContent.contentPaginated.totalPages,
 				fnSendTo: (paging: queryParamPagingProps) => handlePagingCustomersManager(paging),
 			})
 			setConfigPaging({
@@ -317,13 +284,13 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 	useEffect(() => {
 		const cpg = cloneDeep(currentPaging)
 		if (isUndefined(cpg.totalElements) && !isUndefined(props)) {
-			cpg.totalElements = props.headerContent.contentPaginated.totalElements
-			cpg.totalPages = props.headerContent.contentPaginated.totalPages
+			cpg.totalElements = props.customers.headerContent.contentPaginated.totalElements
+			cpg.totalPages = props.customers.headerContent.contentPaginated.totalPages
 		}
 		cpg.fnSendTo = (paging: queryParamPagingProps) => handlePagingCustomersManager(paging)
 		setCurrentPaging(cpg)
-		handleSubmit()
-	}, [filters, props])
+		handleSubmit('')
+	}, [props])
 
 	///////////////////////////////// RENDER ///////////////////////////////////////
 
@@ -377,7 +344,7 @@ export async function getServerSideProps(ctx: {
 		if (customers.error) {
 			return { props: { error: customers.response } }
 		} else {
-			return { props: { ...customers } }
+			return { props: { customers: { ...customers } } }
 		}
 	} else {
 		// TODO : If token expired, implement a redirect ?

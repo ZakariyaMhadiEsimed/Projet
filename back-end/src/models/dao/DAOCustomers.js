@@ -196,11 +196,62 @@ const deleteCustomer = async function (id, customerId) {
   }
 };
 
+/**
+ * return one User from the database
+ * @params {string} mail - mail of User to find
+ */
+const getAllCustomersByUserId = async function (id) {
+  let sql = "SELECT * FROM clients WHERE clients.userId='" + id + "'";
+  try {
+    const result = await new Promise((resolve, reject) => {
+      connection.query(sql, function (error, result, fields) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+    return [...result];
+  } catch (err) {
+    console.error("error : ", err);
+    throw err;
+  }
+};
+
+const lockOrUnlockDeleteCustomer = async function (id, value) {
+  const sql = "UPDATE clients SET canDelete = ? WHERE id = ? ";
+  const values = [value,id];
+  try {
+    const result = await new Promise((resolve, reject) => {
+      connection.query(sql, values, function (error, result, fields) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+
+    if (result.affectedRows > 0) {
+      // La mise à jour a réussi, vous pouvez retourner les données mises à jour si nécessaire
+      return { success: true };
+    } else {
+      return null; // Échec de la mise à jour
+    }
+  } catch (err) {
+    console.error("error: ", err);
+    throw err;
+  }
+};
+
 module.exports = {
   getAllCustomers,
   getCountAllCustomers,
   createCustomer,
   getCustomerById,
   updateCustomer,
-  deleteCustomer
+  deleteCustomer,
+  getAllCustomersByUserId,
+  lockOrUnlockDeleteCustomer
 };

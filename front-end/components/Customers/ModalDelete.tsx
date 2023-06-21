@@ -10,7 +10,7 @@ import * as R from '../../constants/Endpoint'
 interface ModalDeleteProps {
 	showModal: boolean
 	closeModalHandler: () => void
-	id?: number
+	id?: number | null
 }
 const ModalDelete = (props: ModalDeleteProps) => {
 	const fetchDeleteCustomer = async (): Promise<any> => {

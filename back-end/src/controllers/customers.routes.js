@@ -42,7 +42,7 @@ router.post('/all', (req, res) => {
 
 router.post('/create',
     body("lastName").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
-    body("firstName").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
+    body("firstName").optional({ checkFalsy: true }).notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
     body("postalAdress").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
     body("phone").notEmpty().withMessage('Champs requis !').isNumeric().withMessage('Format invalide')
         .isLength({max: 10, min: 10}).withMessage('Format invalide'),
@@ -66,8 +66,6 @@ router.get('/:id', (req, res) => {
     customerRepository.getCustomerById(extractUserId(token[1], process.env.JWT_SECRET).userId, req.params.id).then(foundCustomer => {
         res.status(foundCustomer.status).send(foundCustomer.message)
     })
-
-
 })
 
 router.put('/update/:id',
@@ -96,6 +94,13 @@ router.delete('/:id', (req, res) => {
     customerRepository.deleteCustomer(extractUserId(token[1], process.env.JWT_SECRET).userId,req.params.id).then(r => {
     res.status(r.status).send(r.message)
   })
+})
+
+router.get('', (req, res) => {
+    const token = req.headers.authorization.split(' ')
+    customerRepository.getAllCustomersByUserId(extractUserId(token[1], process.env.JWT_SECRET).userId).then(foundCustomer => {
+        res.status(foundCustomer.status).send(foundCustomer.message)
+    })
 })
 
 exports.initializeRoutes = () => router 

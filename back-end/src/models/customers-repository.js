@@ -3,6 +3,7 @@
  * @params {string} mail - mail of User to find
  */
 const DAOCustomers = require("./dao/DAOCustomers");
+const DAOProjects = require("./dao/DAOProjects");
 exports.getAllCustomers = async function (id, page, size, searchValue) {
   const DAOCustomers = require('./dao/DAOCustomers')
   const customers = await DAOCustomers.getAllCustomers(id, page, size, searchValue)
@@ -40,6 +41,10 @@ exports.createCustomer= async function (id, data) {
  */
 exports.getCustomerById = async function (id, customerId) {
   const DAOCustomers = require('./dao/DAOCustomers')
+  const DAOProjects = require('./dao/DAOProjects')
+
+  const projectsOfCustomerOld = await DAOProjects.getProjectsOfCustomer(customerId)
+  console.log('debug : ', projectsOfCustomerOld)
   const customer = await DAOCustomers.getCustomerById(id, customerId)
   if (customer){
       return {status: 200, message: customer}
@@ -74,5 +79,18 @@ exports.deleteCustomer = async function (id, customerId) {
   }
   else {
     return {status: 400, message:'Client non-supprimé !'}
+  }
+}
+
+exports.getAllCustomersByUserId = async function (id) {
+  const DAOCustomers = require('./dao/DAOCustomers')
+  const result = await DAOCustomers.getAllCustomersByUserId(id)
+  const formattedResult = []
+  result.map(item => formattedResult.push({id:item.id, label: item.firstName + ' ' + item.lastName}))
+  if(formattedResult !== []) {
+    return {status: 200, message:formattedResult}
+  }
+  else {
+    return {status: 400, message:'Not !'}
   }
 }

@@ -10,10 +10,11 @@ interface StyledInputIntegerProps {
 	maxDigits?: number
 	max?: number
 	value?: any
+	onChange?: any
 }
 const StyledInputInteger = (props: StyledInputIntegerProps) => {
 	const [valueFormatted, setValueFormatted] = useState('')
-	const { setValue, placeholder, hasError, name, dataTestId, maxDigits, max, value } = props
+	const { setValue, placeholder, hasError, name, dataTestId, maxDigits, max, value, onChange } = props
 	const handleChange = (event: any) => {
 		const inputValue = event.target.value
 		// Supprime tous les caractères non numériques
@@ -35,7 +36,8 @@ const StyledInputInteger = (props: StyledInputIntegerProps) => {
 			// Met à jour la valeur de l'input
 			setValueFormatted(formattedValue)
 		}
-		setValue(name, numericValue)
+		setValue && setValue(name, numericValue)
+		onChange(numericValue)
 	}
 
 	useEffect(() => {

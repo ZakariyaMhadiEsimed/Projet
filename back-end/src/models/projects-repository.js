@@ -1,4 +1,6 @@
 const {isEmpty} = require("lodash/lang");
+const generateAbbreviation = require("../helpers/generate");
+const moment = require("moment");
 
 /**
  * return one User from the database
@@ -30,7 +32,12 @@ exports.getAllProjects = async function (id, page, size, searchValue) {
 exports.createProject= async function (id, data) {
     const DAOProjects = require('./dao/DAOProjects')
     const DAOCustomers = require('./dao/DAOCustomers')
+    const DAOBills = require('./dao/DAOBills')
+    const abbreviation = generateAbbreviation(data.name)
+    data.abbreviation = abbreviation
     const project = await DAOProjects.createProject(id, data)
+    const test = abbreviation + '-' + moment(new Date()).format('YYYYMMDD')
+    const extraNumber = await DAOBills.getBillSameDay(id, test)
     await DAOCustomers.lockOrUnlockDeleteCustomer(data.customerId, '0')
     if (project){
         return {status: 200, message:'Done !'}
@@ -66,6 +73,11 @@ exports.updateProject = async function (id, projectId, data) {
 
     const oldProject = await DAOProjects.getProjectById(id, projectId)
 
+    /*if(oldProject.name != data.name) {
+        const abbreviation = generateAbbreviation(data.name)
+        data.abbreviation = abbreviation
+    }*/
+
     const result = await DAOProjects.updateProject(id, projectId, data)
     const projectsOfCustomer = await DAOProjects.getProjectsOfCustomer(data.customerId)
 
@@ -94,6 +106,17 @@ exports.deleteProject = async function (id, projectId, customerId) {
     if(isEmpty(projectsOfCustomer)) DAOCustomers.lockOrUnlockDeleteCustomer(customerId, '1')
     if(!result) {
         return {status: 200, message:'Projet supprimé !'}
+    }
+    else {
+        return {status: 400, message:'Projet non-supprimé !'}
+    }
+}
+
+exports.getAllProjectsByUserId = async function (id) {
+    const DAOProjects = require('./dao/DAOProjects')
+    const result = await DAOProjects.getAllProjectsByUserId(id)
+    if(result) {
+        return {status: 200, message:result}
     }
     else {
         return {status: 400, message:'Projet non-supprimé !'}

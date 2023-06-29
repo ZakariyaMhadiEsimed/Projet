@@ -18,7 +18,7 @@ router.post(
     const { email, password } = req.body;
     const user = await userRepository.getUserByMailAndPassword(email, password);
     if(user.status == 200) {
-          const token = generateAuthToken(user.message.id, user.message.email, user.message.firstName, user.message.lastName);
+          const token = generateAuthToken(user.message.id, user.message.email, user.message.firstName, user.message.lastName, user.message.CA);
           return res.json({token});
     }
     else return res.status(user.status).send(user.message);

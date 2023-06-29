@@ -2,7 +2,7 @@ const connection = require("../db/index.js");
 const bcrypt = require("bcryptjs");
 const {passwordsAreEqual} = require("../../security/crypto");
 
-const columns = ['firstName', 'lastName', 'postalAddress', 'phone', 'email']
+const columns = ['firstName', 'lastName', 'postalAdress', 'phone', 'email']
 /**
  * return one User from the database
  * @params {string} mail - mail of User to find

@@ -3,14 +3,12 @@
 import { cloneDeep, isUndefined } from 'lodash'
 import { NextPage } from 'next'
 import cookies from 'next-cookies'
-import { MutableRefObject, useEffect, useState } from 'react'
+import React, { MutableRefObject, useEffect, useState } from 'react'
 import { Column } from 'react-data-grid'
 import { useTranslation } from 'react-i18next'
 import { useDispatch } from 'react-redux'
 import { bindActionCreators } from 'redux'
 ///////COMPONENTS///////
-import PageActions from '../../components/PageActions'
-import { PageActionsButtonLink } from '../../components/PageActions/PageActions'
 import { queryParamPagingProps } from '../../components/Paging/Paging'
 import TableHandler from '../../components/TableHandler'
 import API_TOKEN from '../../config/AxiosConfig'
@@ -21,7 +19,10 @@ import { HeaderFilters } from '../../interfaces/components/PageActions/PageActio
 import { tableConfigProps } from '../../interfaces/components/TableHandler/TableHandler.interfaces'
 import { errorManagerActionCreators, globalLoadingActionCreators } from '../../store/actions'
 import { useForm } from 'react-hook-form'
-import { log } from 'util'
+import ModalAdd from '../../components/Bills/ModalAdd'
+import ActionsTable from '../../components/ActionsTable'
+import { ItemStatus } from '../projects'
+import ModalDelete from '../../components/Bills/ModalDelete'
 
 ///////INTERFACES///////
 interface CustomColumn extends Column<userItem> {
@@ -30,6 +31,12 @@ interface CustomColumn extends Column<userItem> {
 ///////INTERFACES///////
 
 /////////TYPES//////////
+const statusSelect = [
+	{ label: 'Editée', id: 0 },
+	{ label: 'Envoyée', id: 1 },
+	{ label: 'Payée', id: 2 },
+]
+export const referentialStatusBill = ['Editée', 'Envoyée', 'Payée']
 type BillsManagerProps = {
 	Bills?: any | undefined
 	error?: any | undefined
@@ -77,28 +84,60 @@ const BillsManager: NextPage<BillsManagerProps> = (props): JSX.Element | null =>
 		},
 	})
 	const [pagingConfig, setConfigPaging] = useState<any>()
-
+	const [showModal, setShowModal] = useState<boolean>(false)
+	const [billId, setBillId] = useState<number | null>()
+	const [showModalDelete, setShowModalDelete] = useState<boolean>(false)
+	const [projectId, setProjectId] = useState<boolean>(0)
 	///////////////////////////////// CONFIG ///////////////////////////////////////
 
-	/*const rowActionsConfig = {
+	const rowActionsConfig = {
 		actionsList: [
 			{
-				name: t('Bills:page_Bills_table_column_actions_editUser'),
-				clickAction: (row: userItem) => router.push(`${uriList.Bills}${uriList.BillsEdit}/${row.userId}`),
-				isVisible: (row: userItem) => true,
-				disabled: (row: userItem) => !row.enabled,
+				name: 'Modifier',
+				clickAction: (row: userItem) => {
+					setBillId(row.id)
+					setShowModal(true)
+				},
+				isVisible: (row: userItem) => row.statusId == 0,
 			},
 			{
-				name: t('Bills:page_Bills_table_column_actions_deleteUser'),
-				clickAction: (row: userItem) => handleModalDectivate(row),
-				isVisible: (row: userItem) => true,
-				disabled: (row: userItem) => !row.enabled,
-				redFlag: true,
-				testIdKey: 'delete-user',
+				name: 'Envoyer',
+				clickAction: async (row: userItem) => {
+					await fetchSendBill(row.id)
+					handleSubmit()
+				},
+				isVisible: (row: userItem) => row.statusId == 0,
+			},
+			{
+				name: 'Editer',
+				clickAction: async (row: userItem) => {
+					setBillId(row.id)
+					await fetchEditBill(row.id)
+					handleSubmit()
+					setShowModal(true)
+				},
+				isVisible: (row: userItem) => row.statusId == 1,
+			},
+			{
+				name: 'Payer',
+				clickAction: async (row: userItem) => {
+					await fetchPayedBill(row.id)
+					handleSubmit()
+				},
+				isVisible: (row: userItem) => row.statusId == 1,
+			},
+			{
+				name: 'Supprimer',
+				clickAction: (row: userItem) => {
+					setBillId(row.id)
+					setProjectId(row.projectId)
+					setShowModalDelete(true)
+				},
+				isVisible: (row: userItem) => row.statusId == 0,
 			},
 		],
 		requiredRight: null,
-	}*/
+	}
 
 	const columns: CustomColumn[] = [
 		{
@@ -109,7 +148,7 @@ const BillsManager: NextPage<BillsManagerProps> = (props): JSX.Element | null =>
 		},
 		{
 			key: 'paymentDate',
-			name: 'Date prévu',
+			name: 'Date de paiement',
 			sortable: true,
 			sortColumnName: 'paymentDate',
 		},
@@ -124,13 +163,19 @@ const BillsManager: NextPage<BillsManagerProps> = (props): JSX.Element | null =>
 			name: 'Statut',
 			sortable: true,
 			sortColumnName: 'statusId',
+			formatter: (props) => (
+				<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+					<ItemStatus statusId={props.row.statusId} />
+					{referentialStatusBill[props.row.statusId]}
+				</div>
+			),
 		},
-		/*{
+		{
 			key: 'Actions',
 			name: 'Actions',
 			frozen: true,
-			formatter: (props) => <ActionsTable row={props.row} rowActionsConfig={rowActionsConfig} />,
-		},*/
+			formatter: (props) => props.row.statusId != 2 && <ActionsTable row={props.row} rowActionsConfig={rowActionsConfig} />,
+		},
 	]
 
 	///////////////////////////////// HANDLE ///////////////////////////////////////
@@ -170,6 +215,34 @@ const BillsManager: NextPage<BillsManagerProps> = (props): JSX.Element | null =>
 		if (!Bills.error) {
 			return contentOnly && !isUndefined(Bills.headerContent.contentPagined) ? Bills.headerContent.contentPagined : Bills
 		}
+	}
+
+	const fetchSendBill = async (id: number): Promise<any> => {
+		const token = Store.get('user')
+		await API_TOKEN(token.authenticationToken)
+			.get(R.GET_BILL_SEND(id))
+			.then((res) => res.data)
+			.catch((e) => {
+				return { error: true, message: JSON.stringify(e) }
+			})
+	}
+	const fetchEditBill = async (id: number): Promise<any> => {
+		const token = Store.get('user')
+		await API_TOKEN(token.authenticationToken)
+			.get(R.GET_BILL_EDIT(id))
+			.then((res) => res.data)
+			.catch((e) => {
+				return { error: true, message: JSON.stringify(e) }
+			})
+	}
+	const fetchPayedBill = async (id: number): Promise<any> => {
+		const token = Store.get('user')
+		await API_TOKEN(token.authenticationToken)
+			.get(R.GET_BILL_PAYED(id))
+			.then((res) => res.data)
+			.catch((e) => {
+				return { error: true, message: JSON.stringify(e) }
+			})
 	}
 
 	const handleSubmit = (sortingColumn = '', search: string): void => {
@@ -214,6 +287,8 @@ const BillsManager: NextPage<BillsManagerProps> = (props): JSX.Element | null =>
 
 	const handleOpenModal = () => {
 		console.log('debug click')
+		setBillId(null)
+		setShowModal(true)
 	}
 	/////////////////////////////// USE EFFECT /////////////////////////////////////
 
@@ -257,20 +332,15 @@ const BillsManager: NextPage<BillsManagerProps> = (props): JSX.Element | null =>
 	}, [props])
 
 	useEffect(() => {
-		const cpg = cloneDeep(currentPaging)
-		if (isUndefined(cpg.totalElements) && !isUndefined(props)) {
-			cpg.totalElements = props.Bills.headerContent.contentPaginated.totalElements
-			cpg.totalPages = props.Bills.headerContent.contentPaginated.totalPages
-		}
-		cpg.fnSendTo = (paging: queryParamPagingProps) => handlePagingBillsManager(paging)
-		setCurrentPaging(cpg)
-		handleSubmit()
-	}, [filters, props])
+		if (!showModal) handleSubmit()
+	}, [showModal])
 
 	///////////////////////////////// RENDER ///////////////////////////////////////
 
 	return (
 		<>
+			<ModalAdd showModal={showModal} closeModalHandler={() => setShowModal(false)} id={billId} />
+			<ModalDelete showModal={showModalDelete} closeModalHandler={() => setShowModalDelete(false)} id={billId} projectId={projectId} />
 			{props && !isUndefined(tableConfig) && currentPaging ? (
 				<>
 					<TableHandler

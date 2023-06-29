@@ -43,12 +43,14 @@ interface ModalAddProps {
 }
 
 const statusSelect = [
-	{ label: 'Initialisé', id: 0 },
-	{ label: 'En cours', id: 1 },
-	{ label: 'Livré', id: 2 },
-	{ label: 'Clôturé', id: 3 },
+	{ label: 'Propsect', id: 0 },
+	{ label: 'Devis envoyé', id: 1 },
+	{ label: 'Devis accepté', id: 2 },
+	{ label: 'Démarré', id: 3 },
+	{ label: 'Terminé', id: 4 },
+	{ label: 'Annulé', id: 5 },
 ]
-export const referentialStatusProject = ['Initialisé', 'En cours', 'Livré', 'Clôturé']
+export const referentialStatusProject = ['Prospect', 'Devis envoyé', 'Devis accepté', 'Démarré', 'Terminé', 'Annulé']
 const ModalAdd = (props: ModalAddProps) => {
 	const registerFormSchema = Yup.object().shape({
 		customerId: Yup.string().required('Champ requis !'),

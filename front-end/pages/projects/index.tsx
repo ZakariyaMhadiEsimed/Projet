@@ -28,11 +28,11 @@ export const ItemStatus = styled.div`
 	border-radius: 16px;
 	margin-right: 8px;
 	background-color: ${(props: any) =>
-		props.statusId == 0
+		props.statusId == 0 || props.statusId == 5
 			? theme.colors.border.grey
 			: props.statusId == 1
 			? theme.colors.warning
-			: props.statusId == 2
+			: props.statusId == 2 || props.statusId == 3
 			? theme.colors.success_200
 			: theme.colors.danger_200};
 `
@@ -114,7 +114,7 @@ const ProjetcsManager: NextPage<ProjetcsManagerProps> = (props): JSX.Element | n
 					setCustomerId(row.customerId)
 					setShowModalDelete(true)
 				},
-				isVisible: () => true,
+				isVisible: (row) => row.canDelete,
 				disabled: () => false,
 				testIdKey: 'delete-user',
 			},

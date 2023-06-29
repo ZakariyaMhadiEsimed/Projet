@@ -14,12 +14,13 @@ const StyledDatePicker = styled(DatePicker)`
 interface DatePickerInputProps {
 	value: any
 	onChange: any
-	maxDate: Date
+	maxDate?: Date
+	minDate?: Date
 	name?: string
 	hasError?: boolean
 }
 const DatePickerInput = (props: DatePickerInputProps) => {
-	const { value, onChange, maxDate, hasError } = props
+	const { value, onChange, maxDate, hasError, minDate } = props
 	const [selectedDate, setSelectedDate] = useState(null)
 	const handleDateChange = (date: any) => {
 		setSelectedDate(date)
@@ -48,7 +49,8 @@ const DatePickerInput = (props: DatePickerInputProps) => {
 			showYearDropdown={true}
 			scrollableYearDropdown={true}
 			yearDropdownItemNumber={100}
-			maxDate={maxDate}
+			maxDate={maxDate && maxDate}
+			minDate={minDate && minDate}
 			isClearable
 			placeholderText="Sélectionner une date"
 			hasError={hasError}

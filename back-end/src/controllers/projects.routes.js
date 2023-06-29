@@ -40,8 +40,6 @@ router.get('/:id', (req, res) => {
   projectsRepository.getProjectById(extractUserId(token[1], process.env.JWT_SECRET).userId, req.params.id).then(foundCustomer => {
     res.status(foundCustomer.status).send(foundCustomer.message)
   })
-
-
 })
 
 router.put('/update/:id',
@@ -66,6 +64,13 @@ router.delete('/:id/:customerId', (req, res) => {
   projectsRepository.deleteProject(extractUserId(token[1], process.env.JWT_SECRET).userId,req.params.id, req.params.customerId).then(r => {
     res.status(r.status).send(r.message)
   })
+})
+
+router.get('', (req, res) => {
+    const token = req.headers.authorization.split(' ')
+    projectsRepository.getAllProjectsByUserId(extractUserId(token[1], process.env.JWT_SECRET).userId).then(foundCustomer => {
+        res.status(foundCustomer.status).send(foundCustomer.message)
+    })
 })
 
 exports.initializeRoutes = () => router 

@@ -73,9 +73,9 @@ const getCountAllProjects = async function (id, searchValue) {
 };
 
 const createProject = async function (id, data) {
-  const { name, customerId } = data;
-  const sql = "INSERT INTO projets (userId, name, customerId, statusId) VALUES (?, ?, ?, ?)";
-  const values = [id, name, customerId, 0];
+  const { name, customerId, abbreviation } = data;
+  const sql = "INSERT INTO projets (userId, name, customerId, statusId, abbreviation) VALUES (?, ?, ?, ?, ?)";
+  const values = [id, name, customerId, 0, abbreviation ];
 
   try {
     const result = await new Promise((resolve, reject) => {
@@ -232,7 +232,6 @@ const lockOrUnlockDeleteProject = async function (id, value) {
         }
       });
     });
-
     if (result.affectedRows > 0) {
       // La mise à jour a réussi, vous pouvez retourner les données mises à jour si nécessaire
       return { success: true };
@@ -245,6 +244,25 @@ const lockOrUnlockDeleteProject = async function (id, value) {
   }
 };
 
+const getAllProjectsByUserId = async function (id) {
+  let sql = "SELECT * FROM projets WHERE userId='" + id + "'";
+  try {
+    const result = await new Promise((resolve, reject) => {
+      connection.query(sql, function (error, result, fields) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+    return [...result];
+  } catch (err) {
+    console.error("error : ", err);
+    throw err;
+  }
+};
+
 module.exports = {
   getAllProjects,
   getCountAllProjects,
@@ -253,5 +271,6 @@ module.exports = {
   updateProject,
   deleteProject,
   getProjectsOfCustomer,
-  lockOrUnlockDeleteProject
+  lockOrUnlockDeleteProject,
+  getAllProjectsByUserId
 };

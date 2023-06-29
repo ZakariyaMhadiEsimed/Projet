@@ -47,6 +47,7 @@
 		"next-translate": "^1.6.0",
 		"react": "18.2.0",
 		"react-bidirectional-infinite-scroll": "^2.0.1",
+		"react-charts": "^2.0.0-beta.7",
 		"react-data-grid": "^7.0.0-beta.20",
 		"react-datepicker": "^4.8.0",
 		"react-dnd": "^16.0.1",

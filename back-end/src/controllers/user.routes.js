@@ -5,6 +5,7 @@ const userRepository = require('../models/user-repository')
 const { extractUserId } = require('../security/auth') 
 const { validateBody } = require('./validation/route.validator')
 const moment = require("moment/moment");
+const projectsRepository = require("../models/projects-repository");
 const guard = require('express-jwt-permissions')({
   permissionsProperty: 'roles',
 }) 
@@ -21,27 +22,7 @@ router.get('/infos', (req, res) => {
   userRepository.getUserById(extractUserId(token[1], process.env.JWT_SECRET).userId).then(r => {
     res.status(r.status).send(r.message)
   })
-}) 
-
-/* router.post(
-  '/',
-  guard.check(adminRole),
-  body('firstName').notEmpty(),
-  body('lastName').notEmpty(),
-  body('password').notEmpty().isLength({ min: 5 }),
-  (req, res) => {
-    validateBody(req) 
-
-    const existingUser = userRepository.getUserByFirstName(req.body.firstName) 
-    if (existingUser) {
-      throw new Error('Unable to create the user') 
-    }
-
-    userRepository.add(req).then(r => {
-      res.status(r.status).send(r.message)
-    })
-  }
-)  */
+})
 
 router.put('/update',
     body("lastName").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
@@ -73,10 +54,13 @@ router.put('/update',
   }
 )
 
-/*router.delete('/guest/:id', (req, res) => {
-  userRepository.deleteGuest(req.params.id).then(r => {
-    res.status(r.status).send(r.message)
-  })
-}) */
+router.get('/dashboard', (req, res) => {
+    const token = req.headers.authorization.split(' ')
+    userRepository.getInfos(extractUserId(token[1], process.env.JWT_SECRET).userId).then(r => {
+        console.log('debug res : ', r)
+        res.status(r.status).send(r.message)
+    })
+})
+
 
 exports.initializeRoutes = () => router 

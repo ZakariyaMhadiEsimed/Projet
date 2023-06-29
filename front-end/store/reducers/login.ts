@@ -51,6 +51,7 @@ const login = {
 						email: jwt.sub,
 						roleName: jwt.roleName,
 						userId: jwt.userId,
+						CA: jwt.CA,
 					},
 				},
 				isConnected: {

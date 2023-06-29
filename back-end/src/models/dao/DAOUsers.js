@@ -156,7 +156,6 @@ const updateUser = async function (data) {
   }
 };
 
-
 module.exports = {
   findUserByMail,
   findUserByMailAndPassword,

@@ -1,6 +1,7 @@
 const { generateHashedPassword } = require('../security/crypto')
 const DAOUsers = require("./dao/DAOUsers");
 const {isEmpty} = require("lodash/lang");
+const DAOBills = require("./dao/DAOUsers");
 
 /**
  * return one User from the database
@@ -206,14 +207,34 @@ exports.deleteGuest = async function (id) {
 exports.getNewGuest = async function (id) {
   const DAOUsers = require('./dao/DAOUsers')
 
-    const guests = await DAOUsers.getNewGuest(id)
-    const arrayGuests = []
-    if(guests != undefined) {
-      for await (let guest of guests) {
-        arrayGuests.push(guest)
-      }
-      return {status: 200, message: arrayGuests}
-    } else {
-        return {status: 404, message:'Undefined'}
+  const guests = await DAOUsers.getNewGuest(id)
+  const arrayGuests = []
+  if(guests != undefined) {
+    for await (let guest of guests) {
+      arrayGuests.push(guest)
     }
-} 
+    return {status: 200, message: arrayGuests}
+  } else {
+    return {status: 404, message:'Undefined'}
+  }
+}
+
+exports.getInfos = async function (id) {
+  const DAOBills = require('./dao/DAOBills')
+
+  const totalPayed = await DAOBills.getTotalPayed(id)
+  const total = await DAOBills.getTotal(id)
+  const totalWaiting = await DAOBills.getTotalWaiting(id)
+
+  console.log('debug ', totalPayed)
+  const payload = {
+    totalPayed: totalPayed,
+    total: total,
+    totalWaiting: totalWaiting
+  }
+  if(totalPayed != undefined) {
+    return {status: 200, message: payload}
+  } else {
+    return {status: 404, message:'Undefined'}
+  }
+}

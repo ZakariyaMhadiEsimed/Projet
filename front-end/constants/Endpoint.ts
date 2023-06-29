@@ -89,3 +89,38 @@ export function PUT_UPDATE_PROJECT(id: number): string {
 export function DELETE_PROJECT(id: number, customerId: number): string {
 	return `/projects/${id}/${customerId}`
 }
+
+export function GET_PROJECT_SELECT(): string {
+	return '/projects'
+}
+export function POST_CREATE_BILL(): string {
+	return `/bills/create`
+}
+
+export function GET_BILL_SEND(id: number): string {
+	return `/bills/send/${id}`
+}
+
+export function GET_BILL_PAYED(id: number): string {
+	return `/bills/payed/${id}`
+}
+
+export function GET_BILL_EDIT(id: number): string {
+	return `/bills/edit/${id}`
+}
+
+export function GET_BILL(id: number): string {
+	return `/bills/${id}`
+}
+
+export function PUT_UPDATE_BILL(id: number): string {
+	return `/bills/update/${id}`
+}
+
+export function DELETE_BILL(id: number, projectId: number): string {
+	return `/bills/${id}/${projectId}`
+}
+
+export function GET_DASHBOARD(): string {
+	return '/users/dashboard'
+}

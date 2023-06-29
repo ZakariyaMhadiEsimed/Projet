@@ -50,6 +50,7 @@ export const ModalTitle = styled.div`
 	line-height: 30px;
 	padding-bottom: 20px;
 	text-align: center;
+	text-transform: capitalize;
 `
 const ModalBodyWrapper = styled.div`
 	background-color: ${theme.colors.white};

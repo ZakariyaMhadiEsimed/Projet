@@ -21,6 +21,7 @@ import { HeaderFilters } from '../../interfaces/components/PageActions/PageActio
 import { tableConfigProps } from '../../interfaces/components/TableHandler/TableHandler.interfaces'
 import { errorManagerActionCreators, globalLoadingActionCreators } from '../../store/actions'
 import { useForm } from 'react-hook-form'
+import { log } from 'util'
 
 ///////INTERFACES///////
 interface CustomColumn extends Column<userItem> {
@@ -158,7 +159,7 @@ const BillsManager: NextPage<BillsManagerProps> = (props): JSX.Element | null =>
 		}
 	}
 
-	const fetchPostAllBills = async (page = 0, size = initialPageSize, sort = '', contentOnly = false, search): Promise<any> => {
+	const fetchPostAllBills = async (page = 0, size = initialPageSize, sort = '', contentOnly = false, search: string): Promise<any> => {
 		const token = Store.get('user')
 		const Bills = await API_TOKEN(token.authenticationToken)
 			.post(R.POST_ALL_BILLS({ page: `${page}`, size: `${size}`, sort: sort }), { searchValue: search } /*, filtersCP*/)
@@ -211,26 +212,16 @@ const BillsManager: NextPage<BillsManagerProps> = (props): JSX.Element | null =>
 		handleSubmit('', refInput.current.value)
 	}
 
-	const pageActionsConfig = {
-		filtersConfig: {
-			useCheckAll: {
-				setPrevFilters: setPrevFilters,
-				setFilters: setFilters,
-				handleCheckElements: handleCheckElements,
-			},
-			filtersTranslationKeys: {},
-			handleSubmit: handleSubmit,
-		},
-		pageActions: [() => <PageActionsButtonLink href={''}>{t('Bills:page_Bills_button_BillsCreate')}</PageActionsButtonLink>],
+	const handleOpenModal = () => {
+		console.log('debug click')
 	}
-
 	/////////////////////////////// USE EFFECT /////////////////////////////////////
 
 	useEffect(() => {
 		if (props.error) {
 			actionsErrorManager.createError(props.error.response)
 		} else {
-			setItems(props.headerContent.contentPaginated.content)
+			setItems(props.Bills.headerContent.contentPaginated.content)
 			setTableConfig({
 				getComparator: getComparator,
 				searchBarComponent: {
@@ -245,10 +236,14 @@ const BillsManager: NextPage<BillsManagerProps> = (props): JSX.Element | null =>
 					setSearchValue: setSearchValue,
 				},
 				tableTitle: t('common:menu_bill').toString(),
+				actionsConfig: {
+					label: 'Ajouter une facture',
+					onClick: handleOpenModal,
+				},
 			})
 			setCurrentPaging({
-				totalElements: props.headerContent.contentPaginated.totalElements,
-				totalPages: props.headerContent.contentPaginated.totalPages,
+				totalElements: props.Bills.headerContent.contentPaginated.totalElements,
+				totalPages: props.Bills.headerContent.contentPaginated.totalPages,
 				fnSendTo: (paging: queryParamPagingProps) => handlePagingBillsManager(paging),
 			})
 			setConfigPaging({
@@ -264,8 +259,8 @@ const BillsManager: NextPage<BillsManagerProps> = (props): JSX.Element | null =>
 	useEffect(() => {
 		const cpg = cloneDeep(currentPaging)
 		if (isUndefined(cpg.totalElements) && !isUndefined(props)) {
-			cpg.totalElements = props.headerContent.contentPaginated.totalElements
-			cpg.totalPages = props.headerContent.contentPaginated.totalPages
+			cpg.totalElements = props.Bills.headerContent.contentPaginated.totalElements
+			cpg.totalPages = props.Bills.headerContent.contentPaginated.totalPages
 		}
 		cpg.fnSendTo = (paging: queryParamPagingProps) => handlePagingBillsManager(paging)
 		setCurrentPaging(cpg)
@@ -276,16 +271,17 @@ const BillsManager: NextPage<BillsManagerProps> = (props): JSX.Element | null =>
 
 	return (
 		<>
-			{!isUndefined(filters) && <PageActions pageActionsConfig={pageActionsConfig} filtersState={filters} />}
 			{props && !isUndefined(tableConfig) && currentPaging ? (
-				<TableHandler
-					createRows={items}
-					cols={columns}
-					config={tableConfig}
-					pagingConfig={pagingConfig}
-					paging={currentPaging}
-					sortSetter={setSortingColumn}
-				></TableHandler>
+				<>
+					<TableHandler
+						createRows={items}
+						cols={columns}
+						config={tableConfig}
+						pagingConfig={pagingConfig}
+						paging={currentPaging}
+						sortSetter={setSortingColumn}
+					/>
+				</>
 			) : null}
 		</>
 	)
@@ -313,7 +309,7 @@ export async function getServerSideProps(ctx: {
 		if (Bills.error) {
 			return { props: { error: Bills.response } }
 		} else {
-			return { props: { ...Bills } }
+			return { props: { Bills: Bills } }
 		}
 	} else {
 		return { props: { error: 'NO TOKEN' } }

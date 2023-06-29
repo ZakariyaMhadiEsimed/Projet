@@ -6,6 +6,7 @@ export type tableConfigProps = {
 	rowSizing?: string
 	searchBarComponent: searchBarComponentProps
 	defaultSort?: { columnKey: string; direction: 'ASC' | 'DESC' }
+	actionsConfig?: any
 }
 
 export type searchBarComponentProps = {

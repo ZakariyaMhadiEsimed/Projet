@@ -5,6 +5,7 @@ const customerRepository = require('../models/customers-repository')
 const { extractUserId } = require('../security/auth') 
 const { validateBody } = require('./validation/route.validator')
 const moment = require("moment/moment");
+const userRepository = require("../models/user-repository");
 const guard = require('express-jwt-permissions')({
   permissionsProperty: 'roles',
 }) 
@@ -39,23 +40,42 @@ router.post('/all', (req, res) => {
   }
 )  */
 
-router.put('/update',
+router.post('/create',
     body("lastName").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
-    body("firstName").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
-    body("birthDate").notEmpty().withMessage('Champs requis !').custom((value) => {
-        if (!moment(value, 'DD-MM-YYYY', true).isValid()) {
-            throw new Error('Format invalide !');
-        }
-        return true;
-    }),
-    body("CA").notEmpty().withMessage('Champs requis !').isNumeric().withMessage('Format invalide'),
+    body("firstName").optional({ checkFalsy: true }).notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
     body("postalAdress").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
     body("phone").notEmpty().withMessage('Champs requis !').isNumeric().withMessage('Format invalide')
         .isLength({max: 10, min: 10}).withMessage('Format invalide'),
-    body("taxes").notEmpty().withMessage('Champs requis !').isNumeric().withMessage('Format invalide'),
     body("email").notEmpty().withMessage('Champs requis !').isEmail().withMessage('Format invalide !'),
-    body("password").notEmpty().withMessage('Champs requis !')
-        .isLength({min: 8}).withMessage('Longueur min de 8 caractères'),
+    body("typeId").notEmpty().withMessage('Champs requis !'),
+    (req, res) => {
+        validateBody(req)
+        const token = req.headers.authorization.split(' ')
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).send(JSON.stringify(errors.array()));
+        }
+        customerRepository.createCustomer(extractUserId(token[1], process.env.JWT_SECRET).userId, req.body).then(r => {
+            res.status(r.status).send(r.message);
+        });
+    }
+)
+
+router.get('/:id', (req, res) => {
+    const token = req.headers.authorization.split(' ')
+    customerRepository.getCustomerById(extractUserId(token[1], process.env.JWT_SECRET).userId, req.params.id).then(foundCustomer => {
+        res.status(foundCustomer.status).send(foundCustomer.message)
+    })
+})
+
+router.put('/update/:id',
+    body("lastName").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
+    body("firstName").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
+    body("postalAdress").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
+    body("phone").notEmpty().withMessage('Champs requis !').isNumeric().withMessage('Format invalide')
+        .isLength({max: 10, min: 10}).withMessage('Format invalide'),
+    body("email").notEmpty().withMessage('Champs requis !').isEmail().withMessage('Format invalide !'),
+    body("isCompany").notEmpty().withMessage('Champs requis !'),
   (req, res) => {
     validateBody(req)
     const token = req.headers.authorization.split(' ')
@@ -63,16 +83,24 @@ router.put('/update',
     if (!errors.isEmpty()) {
         return res.status(400).send(JSON.stringify(errors.array()));
     }
-    userRepository.updateUser(extractUserId(token[1], process.env.JWT_SECRET).userId, req.body).then(r => {
+    customerRepository.updateCustomer(extractUserId(token[1], process.env.JWT_SECRET).userId, req.params.id, req.body).then(r => {
         res.status(r.status).send(r.message);
     });
   }
 )
 
-/*router.delete('/guest/:id', (req, res) => {
-  userRepository.deleteGuest(req.params.id).then(r => {
+router.delete('/:id', (req, res) => {
+    const token = req.headers.authorization.split(' ')
+    customerRepository.deleteCustomer(extractUserId(token[1], process.env.JWT_SECRET).userId,req.params.id).then(r => {
     res.status(r.status).send(r.message)
   })
-}) */
+})
+
+router.get('', (req, res) => {
+    const token = req.headers.authorization.split(' ')
+    customerRepository.getAllCustomersByUserId(extractUserId(token[1], process.env.JWT_SECRET).userId).then(foundCustomer => {
+        res.status(foundCustomer.status).send(foundCustomer.message)
+    })
+})
 
 exports.initializeRoutes = () => router 

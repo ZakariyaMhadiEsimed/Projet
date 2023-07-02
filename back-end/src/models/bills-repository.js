@@ -37,7 +37,6 @@ exports.createBill= async function (id, data) {
     const project = await DAOProjects.getProjectById(id, data.projectId)
     let number = project.abbreviation + moment(new Date()).format('YYYYMMDD')
     const extraNumber = await DAOBills.getBillSameDay(id, number)
-    console.log('debug extra ', extraNumber)
     if(extraNumber.count > 0) number += '-' + extraNumber.count
 
     data.number = number

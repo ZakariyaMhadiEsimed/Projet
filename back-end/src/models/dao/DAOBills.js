@@ -167,7 +167,6 @@ const getBillById = async function (id, projectId) {
  * @params {string} password - password of user
  */
 const updateBill = async function (id, projectId, data) {
-  console.log('debug data update: ', data);
   const { paymentLimits, paymentTypeId, lines, footer, total, rowsId } = data;
   const sql = "UPDATE factures SET paymentLimits = ?, paymentTypeId = ?, footer = ?, total = ? WHERE id = ?";
   const values = [paymentLimits, paymentTypeId, footer, total, data.id ];
@@ -179,7 +178,6 @@ const updateBill = async function (id, projectId, data) {
           console.error("Error executing update query:", error);
           reject(error);
         } else {
-          console.log("Update query executed successfully:", result);
           resolve(result);
         }
       });
@@ -193,7 +191,6 @@ const updateBill = async function (id, projectId, data) {
           console.error("Error executing second update query:", error);
           reject(error);
         } else {
-          console.log("Second update query executed successfully:", result);
           resolve(result);
         }
       });

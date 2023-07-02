@@ -4,8 +4,6 @@ const router = express.Router()
 const customerRepository = require('../models/customers-repository')
 const { extractUserId } = require('../security/auth') 
 const { validateBody } = require('./validation/route.validator')
-const moment = require("moment/moment");
-const userRepository = require("../models/user-repository");
 const guard = require('express-jwt-permissions')({
   permissionsProperty: 'roles',
 }) 
@@ -18,30 +16,10 @@ router.post('/all', (req, res) => {
   customerRepository.getAllCustomers(extractUserId(token[1], process.env.JWT_SECRET).userId, req.query.page, req.query.size, req.body.searchValue).then(r => {
     res.status(r.status).send(r.message)
   })
-}) 
-
-/* router.post(
-  '/',
-  guard.check(adminRole),
-  body('firstName').notEmpty(),
-  body('lastName').notEmpty(),
-  body('password').notEmpty().isLength({ min: 5 }),
-  (req, res) => {
-    validateBody(req) 
-
-    const existingUser = userRepository.getUserByFirstName(req.body.firstName) 
-    if (existingUser) {
-      throw new Error('Unable to create the user') 
-    }
-
-    userRepository.add(req).then(r => {
-      res.status(r.status).send(r.message)
-    })
-  }
-)  */
+})
 
 router.post('/create',
-    body("lastName").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
+    body("lastName").isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
     body("firstName").optional({ checkFalsy: true }).notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
     body("postalAdress").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
     body("phone").notEmpty().withMessage('Champs requis !').isNumeric().withMessage('Format invalide')
@@ -69,7 +47,7 @@ router.get('/:id', (req, res) => {
 })
 
 router.put('/update/:id',
-    body("lastName").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
+    body("lastName").isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
     body("firstName").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
     body("postalAdress").notEmpty().withMessage('Champs requis !').isLength({max: 150}).withMessage('Longueur max de 150 caractères'),
     body("phone").notEmpty().withMessage('Champs requis !').isNumeric().withMessage('Format invalide')

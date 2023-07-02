@@ -37,7 +37,7 @@ const StyledInputInteger = (props: StyledInputIntegerProps) => {
 			setValueFormatted(formattedValue)
 		}
 		setValue && setValue(name, numericValue)
-		onChange(numericValue)
+		if (onChange) onChange(numericValue)
 	}
 
 	useEffect(() => {

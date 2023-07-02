@@ -155,7 +155,9 @@ const ModalRegister = (props: ModalRegisterProps) => {
 						<PageFormColumnWrapper>
 							<PageFormFieldWrapper>
 								<InputLabelWrapper>
-									<InputLabel>Prénom</InputLabel>
+									<InputLabel>
+										Prénom <span style={{ color: 'red' }}>*</span>
+									</InputLabel>
 									{errors.firstName && <InputErrorMessage>{errors.firstName.message?.toString()}</InputErrorMessage>}
 								</InputLabelWrapper>
 								<Controller
@@ -176,7 +178,9 @@ const ModalRegister = (props: ModalRegisterProps) => {
 							</PageFormFieldWrapper>
 							<PageFormFieldWrapper>
 								<InputLabelWrapper>
-									<InputLabel>Nom</InputLabel>
+									<InputLabel>
+										Nom <span style={{ color: 'red' }}>*</span>
+									</InputLabel>
 									{errors.lastName && <InputErrorMessage>{errors.lastName.message?.toString()}</InputErrorMessage>}
 								</InputLabelWrapper>
 								<Controller
@@ -197,7 +201,9 @@ const ModalRegister = (props: ModalRegisterProps) => {
 							</PageFormFieldWrapper>
 							<PageFormFieldWrapper>
 								<InputLabelWrapper>
-									<InputLabel>Date de naissance</InputLabel>
+									<InputLabel>
+										Date de naissance <span style={{ color: 'red' }}>*</span>
+									</InputLabel>
 									{errors.birthDate && <InputErrorMessage>{errors.birthDate.message?.toString()}</InputErrorMessage>}
 								</InputLabelWrapper>
 								<Controller
@@ -218,7 +224,9 @@ const ModalRegister = (props: ModalRegisterProps) => {
 						<PageFormColumnWrapper>
 							<PageFormFieldWrapper>
 								<InputLabelWrapper>
-									<InputLabel>Adresse postale</InputLabel>
+									<InputLabel>
+										Adresse postale <span style={{ color: 'red' }}>*</span>
+									</InputLabel>
 									{errors.postalAdress && <InputErrorMessage>{errors.postalAdress.message?.toString()}</InputErrorMessage>}
 								</InputLabelWrapper>
 								<Controller
@@ -239,7 +247,9 @@ const ModalRegister = (props: ModalRegisterProps) => {
 							</PageFormFieldWrapper>
 							<PageFormFieldWrapper>
 								<InputLabelWrapper>
-									<InputLabel>Téléphone</InputLabel>
+									<InputLabel>
+										Téléphone <span style={{ color: 'red' }}>*</span>
+									</InputLabel>
 									{errors.phone && <InputErrorMessage>{errors.phone.message?.toString()}</InputErrorMessage>}
 								</InputLabelWrapper>
 								<Controller
@@ -261,7 +271,9 @@ const ModalRegister = (props: ModalRegisterProps) => {
 						<PageFormColumnWrapper>
 							<PageFormFieldWrapper>
 								<InputLabelWrapper>
-									<InputLabel>CA (en €)</InputLabel>
+									<InputLabel>
+										CA (en €) <span style={{ color: 'red' }}>*</span>
+									</InputLabel>
 									{errors.CA && <InputErrorMessage>{errors.CA.message?.toString()}</InputErrorMessage>}
 								</InputLabelWrapper>
 								<Controller
@@ -281,7 +293,9 @@ const ModalRegister = (props: ModalRegisterProps) => {
 							</PageFormFieldWrapper>
 							<PageFormFieldWrapper>
 								<InputLabelWrapper>
-									<InputLabel>Taux de charge</InputLabel>
+									<InputLabel>
+										Taux de charge <span style={{ color: 'red' }}>*</span>
+									</InputLabel>
 									{errors.taxes && <InputErrorMessage>{errors.taxes.message?.toString()}</InputErrorMessage>}
 								</InputLabelWrapper>
 								<Controller
@@ -306,7 +320,9 @@ const ModalRegister = (props: ModalRegisterProps) => {
 					<div style={{ paddingTop: '20px' }}>
 						<InputWrapper>
 							<InputLabelWrapper>
-								<InputLabel>Email</InputLabel>
+								<InputLabel>
+									Email <span style={{ color: 'red' }}>*</span>
+								</InputLabel>
 								{errors.email && <InputErrorMessage>{errors.email.message?.toString()}</InputErrorMessage>}
 							</InputLabelWrapper>
 							<Controller
@@ -327,7 +343,9 @@ const ModalRegister = (props: ModalRegisterProps) => {
 						</InputWrapper>
 						<InputWrapper style={{ marginTop: '10px' }}>
 							<InputLabelWrapper>
-								<InputLabel>{t('login:page_login_form_label_password')}</InputLabel>
+								<InputLabel>
+									{t('login:page_login_form_label_password')} <span style={{ color: 'red' }}>*</span>
+								</InputLabel>
 								{errors.password && (
 									<InputErrorMessage data-testid="password-error-message">{errors.password.message?.toString()}</InputErrorMessage>
 								)}

@@ -21,6 +21,7 @@ import ModalAdd, { referentialStatusProject } from '../../components/Projects/Mo
 import ActionsTable from '../../components/ActionsTable'
 import theme from '../../theme/theme'
 import styled from 'styled-components'
+import ModalView from '../../components/Projects/ModalView'
 
 export const ItemStatus = styled.div`
 	width: 16px;
@@ -93,10 +94,20 @@ const ProjetcsManager: NextPage<ProjetcsManagerProps> = (props): JSX.Element | n
 	const [showModalDelete, setShowModalDelete] = useState<boolean>(false)
 	const [projectId, setProjectId] = useState<number | null>(null)
 	const [customerId, setCustomerId] = useState<number | null>(null)
+	const [showModalView, setShowModalView] = useState<boolean>(false)
 
 	///////////////////////////////// CONFIG ///////////////////////////////////////
 	const rowActionsConfig = {
 		actionsList: [
+			{
+				name: 'Voir',
+				clickAction: (row: userItem) => {
+					setProjectId(row.id)
+					setShowModalView(true)
+				},
+				isVisible: () => true,
+				disabled: () => false,
+			},
 			{
 				name: 'Modifier',
 				clickAction: (row: userItem) => {
@@ -292,6 +303,7 @@ const ProjetcsManager: NextPage<ProjetcsManagerProps> = (props): JSX.Element | n
 
 	return (
 		<>
+			<ModalView showModal={showModalView} closeModalHandler={() => setShowModalView(false)} id={projectId} />
 			<ModalDelete showModal={showModalDelete} closeModalHandler={() => setShowModalDelete(false)} id={projectId} customerId={customerId} />
 			<ModalAdd showModal={showModal} closeModalHandler={() => setShowModal(false)} id={projectId} />
 			{props && !isUndefined(tableConfig) && currentPaging ? (

@@ -41,15 +41,13 @@ interface ModalAddProps {
 const ModalAdd = (props: ModalAddProps) => {
 	const registerFormSchema = Yup.object().shape({
 		typeId: Yup.number().required('Champ requis !'),
-		firstName: Yup.string().when('typeId', {
-			is: '0',
-			then: Yup.string().required('Champ requis !').max(150, 'Nombre de caractères trop élevé !'),
-		}),
+		firstName: Yup.string().max(150, 'Nombre de caractères trop élevé !'),
 		lastName: Yup.string().required('Champ requis !').max(150, 'Nombre de caractères trop élevé !'),
 		postalAdress: Yup.string().required('Champ requis !').max(150, 'Nombre de caractères trop élevé !'),
 		phone: Yup.string().required('Champ requis !').min(10, 'Format invalide !'),
-		email: Yup.string().email('Format invalide !').required('Champ requis !').email('Format invalide !'),
+		email: Yup.string().email('Format invalide !').required('Champ requis !'),
 	})
+
 	const [nameToDisplay, setNameToDisplay] = useState<string>('')
 	const {
 		control,
@@ -139,7 +137,9 @@ const ModalAdd = (props: ModalAddProps) => {
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<PageFormFieldWrapper>
 						<InputLabelWrapper>
-							<InputLabel>Choisissez le type du client : </InputLabel>
+							<InputLabel>
+								Choisissez le type du client : <span style={{ color: 'red' }}>*</span>
+							</InputLabel>
 							{errors.typeId && <InputErrorMessage>{errors.typeId.message?.toString()}</InputErrorMessage>}
 						</InputLabelWrapper>
 						<Controller
@@ -168,7 +168,9 @@ const ModalAdd = (props: ModalAddProps) => {
 						<PageFormColumnWrapper>
 							<PageFormFieldWrapper>
 								<InputLabelWrapper>
-									<InputLabel>Nom</InputLabel>
+									<InputLabel>
+										Nom <span style={{ color: 'red' }}>*</span>
+									</InputLabel>
 									{errors.lastName && <InputErrorMessage>{errors.lastName.message?.toString()}</InputErrorMessage>}
 								</InputLabelWrapper>
 								<Controller
@@ -214,7 +216,9 @@ const ModalAdd = (props: ModalAddProps) => {
 						<PageFormColumnWrapper>
 							<PageFormFieldWrapper>
 								<InputLabelWrapper>
-									<InputLabel>Adresse postale</InputLabel>
+									<InputLabel>
+										Adresse postale <span style={{ color: 'red' }}>*</span>
+									</InputLabel>
 									{errors.postalAdress && <InputErrorMessage>{errors.postalAdress.message?.toString()}</InputErrorMessage>}
 								</InputLabelWrapper>
 								<Controller
@@ -235,7 +239,9 @@ const ModalAdd = (props: ModalAddProps) => {
 							</PageFormFieldWrapper>
 							<PageFormFieldWrapper>
 								<InputLabelWrapper>
-									<InputLabel>Téléphone</InputLabel>
+									<InputLabel>
+										Téléphone <span style={{ color: 'red' }}>*</span>
+									</InputLabel>
 									{errors.phone && <InputErrorMessage>{errors.phone.message?.toString()}</InputErrorMessage>}
 								</InputLabelWrapper>
 								<Controller
@@ -258,7 +264,9 @@ const ModalAdd = (props: ModalAddProps) => {
 					<div style={{ paddingTop: '20px' }}>
 						<InputWrapper>
 							<InputLabelWrapper>
-								<InputLabel>Email</InputLabel>
+								<InputLabel>
+									Email <span style={{ color: 'red' }}>*</span>
+								</InputLabel>
 								{errors.email && <InputErrorMessage>{errors.email.message?.toString()}</InputErrorMessage>}
 							</InputLabelWrapper>
 							<Controller

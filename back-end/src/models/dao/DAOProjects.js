@@ -138,7 +138,6 @@ const getProjectById = async function (id, projectId) {
 const updateProject = async function (id, projectId, data) {
   const { name, statusId, customerId } = data;
   const sql = "UPDATE projets SET name = ?, statusId = ?, customerId = ? WHERE id = ? AND userId = ?";
-  console.log('debug sql : ', sql)
   const values = [name, statusId, customerId, projectId, id];
 
   try {

@@ -176,7 +176,6 @@ const ModalAdd = (props: ModalAddProps) => {
 	useEffect(() => {
 		if (props.id && props.showModal) {
 			fetchGetBill(props.id).then((r) => {
-				console.log('debug r : ', r)
 				setValue('paymentLimits', r?.paymentLimits)
 				setValue('paymentTypeId', r?.paymentTypeId)
 				setValue('projectId', r?.projectId)
@@ -185,7 +184,6 @@ const ModalAdd = (props: ModalAddProps) => {
 				setNameToDisplay(r?.number)
 				setRows(JSON.parse(r?.rows))
 				setRowsId(r?.rowsId)
-				console.log('debug content : ', r?.content)
 			})
 		} else setNameToDisplay('Nouveau client')
 		fetchGetProjects().then((r) => setDataSelect(r))
@@ -209,7 +207,9 @@ const ModalAdd = (props: ModalAddProps) => {
 					<FormHandler formCols={3}>
 						<PageFormColumnWrapper>
 							<InputLabelWrapper>
-								<InputLabel>Projet associé</InputLabel>
+								<InputLabel>
+									Projet associé <span style={{ color: 'red' }}>*</span>
+								</InputLabel>
 								{errors.projectId && <InputErrorMessage>{errors.projectId.message?.toString()}</InputErrorMessage>}
 							</InputLabelWrapper>
 							<Controller
@@ -246,7 +246,9 @@ const ModalAdd = (props: ModalAddProps) => {
 						</PageFormColumnWrapper>
 						<PageFormColumnWrapper>
 							<InputLabelWrapper>
-								<InputLabel>Date Limite de paiement</InputLabel>
+								<InputLabel>
+									Date Limite de paiement <span style={{ color: 'red' }}>*</span>
+								</InputLabel>
 								{errors.paymentLimits && <InputErrorMessage>{errors.paymentLimits.message?.toString()}</InputErrorMessage>}
 							</InputLabelWrapper>
 							<Controller
@@ -265,7 +267,9 @@ const ModalAdd = (props: ModalAddProps) => {
 						</PageFormColumnWrapper>
 						<PageFormColumnWrapper>
 							<InputLabelWrapper>
-								<InputLabel>Type de paiement</InputLabel>
+								<InputLabel>
+									Type de paiement <span style={{ color: 'red' }}>*</span>
+								</InputLabel>
 								{errors.paymentTypeId && <InputErrorMessage>{errors.paymentTypeId.message?.toString()}</InputErrorMessage>}
 							</InputLabelWrapper>
 							<Controller
@@ -372,7 +376,9 @@ const ModalAdd = (props: ModalAddProps) => {
 					<div style={{ marginTop: '15px' }}>
 						<PageFormFieldWrapper>
 							<InputLabelWrapper>
-								<InputLabel>Bas de page</InputLabel>
+								<InputLabel>
+									Bas de page <span style={{ color: 'red' }}>*</span>
+								</InputLabel>
 								{errors.footer && <InputErrorMessage>{errors.footer.message?.toString()}</InputErrorMessage>}
 							</InputLabelWrapper>
 							<Controller

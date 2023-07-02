@@ -44,7 +44,6 @@ exports.getCustomerById = async function (id, customerId) {
   const DAOProjects = require('./dao/DAOProjects')
 
   const projectsOfCustomerOld = await DAOProjects.getProjectsOfCustomer(customerId)
-  console.log('debug : ', projectsOfCustomerOld)
   const customer = await DAOCustomers.getCustomerById(id, customerId)
   if (customer){
       return {status: 200, message: customer}

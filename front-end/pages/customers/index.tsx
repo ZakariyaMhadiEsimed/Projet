@@ -19,6 +19,7 @@ import { useForm } from 'react-hook-form'
 import ModalAdd from '../../components/Customers/ModalAdd'
 import ActionsTable from '../../components/ActionsTable'
 import ModalDelete from '../../components/Customers/ModalDelete'
+import ModalView from '../../components/Customers/ModalView'
 
 ///////INTERFACES///////
 interface CustomColumn extends Column<customerItem> {
@@ -58,6 +59,7 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 	})
 	const [showModalAdd, setShowModalAdd] = useState<boolean>(false)
 	const [showModalDelete, setShowModalDelete] = useState<boolean>(false)
+	const [showModalView, setShowModalView] = useState<boolean>(false)
 	const actionsErrorManager = bindActionCreators(errorManagerActionCreators, useDispatch())
 	const actionsGlobalLoading = bindActionCreators(globalLoadingActionCreators, useDispatch())
 	const {
@@ -78,6 +80,15 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 
 	const rowActionsConfig = {
 		actionsList: [
+			{
+				name: 'Voir',
+				clickAction: (row: customerItem) => {
+					setCustomerId(row.id)
+					setShowModalView(true)
+				},
+				isVisible: () => true,
+				disabled: () => false,
+			},
 			{
 				name: 'Modifier',
 				clickAction: (row: customerItem) => {
@@ -296,6 +307,7 @@ const CustomersManager: NextPage<CustomersManagerProps> = (props): JSX.Element |
 
 	return (
 		<>
+			<ModalView showModal={showModalView} closeModalHandler={() => setShowModalView(false)} id={customerId} />
 			<ModalDelete showModal={showModalDelete} closeModalHandler={() => setShowModalDelete(false)} id={customerId} />
 			<ModalAdd showModal={showModalAdd} closeModalHandler={() => setShowModalAdd(false)} id={customerId} />
 			{props && !isUndefined(tableConfig) && currentPaging ? (

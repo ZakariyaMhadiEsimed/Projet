@@ -226,7 +226,6 @@ exports.getInfos = async function (id) {
   const total = await DAOBills.getTotal(id)
   const totalWaiting = await DAOBills.getTotalWaiting(id)
 
-  console.log('debug ', totalPayed)
   const payload = {
     totalPayed: totalPayed,
     total: total,

@@ -10,7 +10,6 @@ exports.getAllProjects = async function (id, page, size, searchValue) {
   const DAOProjects = require('./dao/DAOProjects')
   const customers = await DAOProjects.getAllProjects(id, page, size, searchValue)
   const result = await DAOProjects.getCountAllProjects(id, searchValue)
-    console.log('debug count : ', result.count)
   const payload = {
     headerContent :
         {
@@ -102,7 +101,6 @@ exports.deleteProject = async function (id, projectId, customerId) {
     const DAOCustomers = require('./dao/DAOCustomers')
     const result = await DAOProjects.deleteProject(id, projectId)
     const projectsOfCustomer = await DAOProjects.getProjectsOfCustomer(customerId)
-    console.log('debug customer id : ', customerId, ' have : ', projectsOfCustomer)
     if(isEmpty(projectsOfCustomer)) DAOCustomers.lockOrUnlockDeleteCustomer(customerId, '1')
     if(!result) {
         return {status: 200, message:'Projet supprimé !'}

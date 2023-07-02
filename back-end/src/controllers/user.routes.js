@@ -57,7 +57,6 @@ router.put('/update',
 router.get('/dashboard', (req, res) => {
     const token = req.headers.authorization.split(' ')
     userRepository.getInfos(extractUserId(token[1], process.env.JWT_SECRET).userId).then(r => {
-        console.log('debug res : ', r)
         res.status(r.status).send(r.message)
     })
 })

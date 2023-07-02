@@ -125,7 +125,6 @@ const ModalAdd = (props: ModalAddProps) => {
 	}
 
 	const onSubmit = async (data: any): Promise<void> => {
-		console.log('debug data ', data)
 		if (!isNull(props.id)) {
 			await fetchUpdateProject(data)
 		} else {
@@ -155,8 +154,10 @@ const ModalAdd = (props: ModalAddProps) => {
 						<PageFormColumnWrapper>
 							<PageFormFieldWrapper>
 								<InputLabelWrapper>
-									<InputLabel>Nom du projet</InputLabel>
-									{errors.lastName && <InputErrorMessage>{errors.lastName.message?.toString()}</InputErrorMessage>}
+									<InputLabel>
+										Nom du projet <span style={{ color: 'red' }}>*</span>
+									</InputLabel>
+									{errors.name && <InputErrorMessage>{errors.name.message?.toString()}</InputErrorMessage>}
 								</InputLabelWrapper>
 								<Controller
 									control={control}
@@ -168,7 +169,7 @@ const ModalAdd = (props: ModalAddProps) => {
 											name={name}
 											data-testid="name"
 											type="text"
-											hasError={!isUndefined(errors.lastName)}
+											hasError={!isUndefined(errors.name)}
 											placeholder={'Saisissez le nom du projet'}
 										/>
 									)}
@@ -178,7 +179,9 @@ const ModalAdd = (props: ModalAddProps) => {
 						<PageFormColumnWrapper>
 							<PageFormFieldWrapper>
 								<InputLabelWrapper>
-									<InputLabel>Client associé</InputLabel>
+									<InputLabel>
+										Client associé <span style={{ color: 'red' }}>*</span>
+									</InputLabel>
 									{errors.customerId && <InputErrorMessage>{errors.customerId.message?.toString()}</InputErrorMessage>}
 								</InputLabelWrapper>
 								<Controller
